@@ -10,6 +10,7 @@ import java.io.IOException;
 public class PanelBody extends JPanel {
 
     public PanelBody(){
+        this.setSize(1000, 700);
 
     }
 

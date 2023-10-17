@@ -1,13 +1,18 @@
 package View;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 import java.awt.*;
 
 public class PanleMenu extends JPanel {
     private LogoPanel logoPanel = new LogoPanel();
+    private MenuBar menu = new MenuBar();
     public PanleMenu(){
-        logoPanel.setSize(200, 600);
-        this.add(logoPanel);
+        this.setLayout(new BorderLayout());
+
+
+        this.add(logoPanel, BorderLayout.NORTH);
+        this.add(menu, BorderLayout.CENTER);
+
         this.setPreferredSize(new Dimension(200,700));
 
     }

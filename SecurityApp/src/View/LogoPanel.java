@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class LogoPanel extends JPanel {
     public LogoPanel() {
-        this.setSize(200, 50);
+
         BufferedImage image = null;
         try {
             image = ImageIO.read(new File("ImageIcon\\logo.png"));
