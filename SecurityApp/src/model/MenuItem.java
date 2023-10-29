@@ -1,4 +1,4 @@
-package View;
+package model;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -9,10 +9,19 @@ import java.util.ArrayList;
 
 public class MenuItem extends JPanel {
     private final ArrayList<MenuItem> menuItem = new ArrayList<>();
+    private int idItem;
     private ActionListener act;
     private JSeparator jSeparator1;
     private JLabel lbIcon;
     private JLabel lbName;
+
+    public int getIdItem() {
+        return idItem;
+    }
+
+    public void setIdItem(int idItem) {
+        this.idItem = idItem;
+    }
 
     public JLabel getLbName() {
         return lbName;
@@ -29,8 +38,9 @@ public class MenuItem extends JPanel {
     public ArrayList<MenuItem> getSubMenu() {
         return menuItem;
     }
-    public MenuItem(String menuName, ActionListener act,MenuItem... menuItem) {
+    public MenuItem(int id,String menuName, ActionListener act,MenuItem... menuItem) {
         initComponents();
+        idItem =id;
         lbName.setText(menuName);
         lbName.setForeground(Color.white);
         if (act != null) {

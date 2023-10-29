@@ -6,6 +6,15 @@ import java.awt.*;
 public class PanleMenu extends JPanel {
     private LogoPanel logoPanel = new LogoPanel();
     private MenuBar menu = new MenuBar();
+
+    public MenuBar getMenu() {
+        return menu;
+    }
+
+    public void setMenu(MenuBar menu) {
+        this.menu = menu;
+    }
+
     public PanleMenu(){
         this.setLayout(new BorderLayout());
 

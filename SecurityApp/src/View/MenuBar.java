@@ -1,20 +1,28 @@
 package View;
 
+import model.MenuItem;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MenuBar extends JPanel {
-    private JPanel panel,p;
+    private JPanel panel;
+    private List<model.MenuItem> list;
 
+    public List<model.MenuItem> getList() {
+        return list;
+    }
+
+    public void setList(List<model.MenuItem> list) {
+        this.list = list;
+    }
 
     public MenuBar(){
-        p = new Body();
+        list = new ArrayList<>();
         JPanel panelTilie = new JPanel();
         panelTilie.setLayout(new BorderLayout());
         panelTilie.setOpaque(false);
@@ -25,25 +33,18 @@ public class MenuBar extends JPanel {
         panel.setBorder(new EmptyBorder(0,0,0,0));
 
 
-       MenuItem caesar = new MenuItem("     Caesar", new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               p.add(new UICaesar());
-               
-               System.out.println("click");
-           }
-       });
+       model.MenuItem caesar = new model.MenuItem(1,"     Caesar", null);
 
-       MenuItem affine = new MenuItem("     Affine",null);
+       model.MenuItem affine = new model.MenuItem(2,"     Affine",null);
 
-        MenuItem rsa = new MenuItem("     RSA",null);
+       model.MenuItem rsa = new model.MenuItem(3,"     RSA",null);
 
 
 
-       MenuItem kdx = new MenuItem("Khoa Doi Xung",null,caesar,affine);
+       model.MenuItem kdx = new model.MenuItem(0,"Khoa Doi Xung",null,caesar,affine);
        kdx.getLbName().setFont(new Font(kdx.getLbName().getFont().getName(), Font.BOLD, 16));
 
-        MenuItem kbdx = new MenuItem("Khoa Bat Doi Xung",null,rsa);
+        model.MenuItem kbdx = new model.MenuItem(0,"Khoa Bat Doi Xung",null,rsa);
         kbdx.getLbName().setFont(new Font(kdx.getLbName().getFont().getName(), Font.BOLD, 16));
 
        addMenu(kdx,kbdx);
@@ -54,11 +55,12 @@ public class MenuBar extends JPanel {
 
     }
 
-    private void addMenu(MenuItem... menu) {
+    private void addMenu(model.MenuItem... menu) {
         for (int i = 0; i < menu.length; i++) {
             panel.add(menu[i]);
-            ArrayList<MenuItem> subMenu = menu[i].getSubMenu();
+            ArrayList<model.MenuItem> subMenu = menu[i].getSubMenu();
             for (MenuItem m : subMenu) {
+                list.add(m);
                 addMenu(m);
             }
         }

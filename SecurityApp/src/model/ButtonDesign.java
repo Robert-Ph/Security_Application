@@ -1,4 +1,4 @@
-package View;
+package model;
 
 
 import java.awt.AlphaComposite;

@@ -1,11 +1,17 @@
 package View;
 
+import form.*;
+import model.MenuItem;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class Main {
 
-
+    private JPanel form;
+    private PanleMenu menu;
+    private List<MenuItem> list;
     public Main(){
         init();
     }
@@ -14,13 +20,15 @@ public class Main {
         frame.setTitle("CryptaKey");
         ImageIcon image = new ImageIcon("ImageIcon\\logo.png");
 
+        form = new PanelBody();
+//        form = new UITransposition();
+        menu = new PanleMenu();
 
-        PanleMenu panle = new PanleMenu();
 
-        frame.getContentPane().add(panle, BorderLayout.WEST);
-        frame.getContentPane().add(new Body(), BorderLayout.CENTER);
-//        frame.getContentPane().add(new UICaesar(), BorderLayout.CENTER);
 
+        frame.getContentPane().add(menu, BorderLayout.WEST);
+        frame.getContentPane().add(form, BorderLayout.CENTER);
+//        frame.getContentPane().add(new UIAffine(), BorderLayout.CENTER);
 
         frame.setSize(1200, 700);
         frame.setIconImage(image.getImage());
