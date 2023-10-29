@@ -1,5 +1,6 @@
 package form;
 
+import algorithm.CaesarCipher;
 import model.ButtonDesign;
 
 import javax.swing.*;
@@ -200,7 +201,7 @@ public class UICaesar extends JPanel {
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         ButtonDesign buttonEncry = new ButtonDesign();
-        buttonEncry.setText("Decrypted");
+        buttonEncry.setText("Encrypted");
         buttonEncry.setFont(new Font(buttonEncry.getName(), Font.BOLD, 16));
         buttonEncry.setColor1(Color.decode("#FF0000"));
         buttonEncry.setPreferredSize(new Dimension(110,40));
@@ -217,5 +218,29 @@ public class UICaesar extends JPanel {
         this.add(nameCipher, BorderLayout.NORTH);
         this.add(panelBody, BorderLayout.CENTER);
         this.add(panelButton, BorderLayout.SOUTH);
+
+
+        //envent
+        buttonEncry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String input = textArea.getText();
+                int key = Integer.parseInt(textKey.getText());
+                CaesarCipher cipher = new CaesarCipher();
+                String output = cipher.encryption(input,key);
+                textArea_Encry.setText(output);
+            }
+        });
+
+        buttonDecry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String input = textArea.getText();
+                int key = Integer.parseInt(textKey.getText());
+                CaesarCipher cipher = new CaesarCipher();
+                String output = cipher.decryption(input,key);
+                textArea_Encry.setText(output);
+            }
+        });
     }
 }

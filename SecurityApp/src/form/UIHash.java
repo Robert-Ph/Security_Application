@@ -10,17 +10,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class UIAES extends JPanel {
-
-    private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
-    public UIAES(){
+public class UIHash extends JPanel {
+    private final String[] listPlaintext = {"SHA-1", "SHA-224","SHA-256","SHA-384","SHA-512","SHA-512/224","SHA-512/256","MD2","MD4","MD5"};
+    public UIHash(){
         init();
     }
 
     public void init(){
         this.setSize(1000, 700);
         this.setLayout(new BorderLayout());
-        JLabel nameCipher = new JLabel("AES");
+
+        JLabel nameCipher = new JLabel("Hash");
         Font font = new Font(nameCipher.getFont().getName(), Font.BOLD, 24);
         nameCipher.setFont(font);
         nameCipher.setHorizontalAlignment(SwingConstants.CENTER);
@@ -39,7 +39,7 @@ public class UIAES extends JPanel {
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel panelText = new JPanel();
         JTextArea textArea = new JTextArea(14,60);
-        panelText.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelText.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Input", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
         JPanel panelButtonEncry = new JPanel();
@@ -92,43 +92,15 @@ public class UIAES extends JPanel {
         panelKeyandPlaintext.setPreferredSize(new Dimension(300, 100));
         panelKeyandPlaintext.setLayout(new GridLayout(2,1,5,5));
 
-        //panel giao diện phần tao key
-        JPanel panelKey = new JPanel();
-        panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JLabel lableKey = new JLabel("Input Key: ");
-        JTextArea textKey = new JTextArea(4,25);
 
-        //nut Create Key
-        ButtonDesign buttonCreateKey = new ButtonDesign();
-        buttonCreateKey.setText("Create Key");
-
-        //save key
-        ButtonDesign buttonSaveKey = new ButtonDesign();
-        buttonSaveKey.setText("Copy");
-
-        //paste key
-        ButtonDesign buttonPasteKey = new ButtonDesign();
-        buttonPasteKey.setText("Paste");
-
-        //open key
-        ButtonDesign buttonOpenKey = new ButtonDesign();
-        buttonOpenKey.setText("Open");
-
-        panelKey.add(lableKey);
-        panelKey.add(textKey);
-        panelKey.add(buttonCreateKey);
-        panelKey.add(buttonSaveKey);
-        panelKey.add(buttonPasteKey);
-        panelKey.add(buttonOpenKey);
 
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "PlainText & CipherText", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Setting", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         JComboBox listCombobox = new JComboBox(listPlaintext);
         listCombobox.setBackground(Color.white);
-        JLabel labelplainCipher = new JLabel("P & C: ");
+        JLabel labelplainCipher = new JLabel("Tool ");
         listCombobox.setPreferredSize(new Dimension(220, 20));
         JLabel labelType= new JLabel("Type: ");
         JCheckBox checkBoxText = new JCheckBox("Text");
@@ -148,6 +120,7 @@ public class UIAES extends JPanel {
             }
         };
 
+
         checkBoxText.addActionListener(actionListener);
         checkBoxFile.addActionListener(actionListener);
 
@@ -157,7 +130,7 @@ public class UIAES extends JPanel {
         panelPlaintext.add(checkBoxText);
         panelPlaintext.add(checkBoxFile);
 
-        panelKeyandPlaintext.add(panelKey);
+
         panelKeyandPlaintext.add(panelPlaintext);
 
         //add panel
@@ -171,7 +144,7 @@ public class UIAES extends JPanel {
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel paneltext_Encry = new JPanel();
         JTextArea textArea_Encry = new JTextArea(14,60);
-        paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Output", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
         JPanel panelButtonDecry = new JPanel();
@@ -186,13 +159,9 @@ public class UIAES extends JPanel {
         ButtonDesign buttonCopy_Encr = new ButtonDesign();
         buttonCopy_Encr.setText("Copy");
 
-        //nut Upgrade
-        ButtonDesign buttonUpgrade_Encr = new ButtonDesign();
-        buttonUpgrade_Encr.setText("Upgrade");
 
         panelButtonDecry.add(buttonSave_Encr);
         panelButtonDecry.add(buttonCopy_Encr);
-        panelButtonDecry.add(buttonUpgrade_Encr);
 
         paneltext_Encry.add(textArea_Encry, BorderLayout.CENTER);
         paneltext_Encry.add(panelButtonDecry, BorderLayout.EAST);
@@ -207,6 +176,7 @@ public class UIAES extends JPanel {
         // add panelEncry and panelDecry
         panelBody.add(panelEncry);
         panelBody.add(panelDecry);
+
         /*
         ###############################################################################
          */
@@ -215,18 +185,12 @@ public class UIAES extends JPanel {
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         ButtonDesign buttonEncry = new ButtonDesign();
-        buttonEncry.setText("Encrypted");
+        buttonEncry.setText("Generate Hash");
         buttonEncry.setFont(new Font(buttonEncry.getName(), Font.BOLD, 16));
         buttonEncry.setColor1(Color.decode("#FF0000"));
-        buttonEncry.setPreferredSize(new Dimension(110,40));
+        buttonEncry.setPreferredSize(new Dimension(150,40));
 
-        ButtonDesign buttonDecry = new ButtonDesign();
-        buttonDecry.setText("Decrypted");
-        buttonDecry.setFont(new Font(buttonDecry.getName(), Font.BOLD, 16));
-        buttonDecry.setColor1(Color.decode("#00AF17"));
-        buttonDecry.setPreferredSize(new Dimension(110,40));
 
-        panelButton.add(buttonDecry);
         panelButton.add(buttonEncry);
 
         this.add(nameCipher, BorderLayout.NORTH);

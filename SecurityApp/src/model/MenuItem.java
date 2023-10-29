@@ -102,7 +102,7 @@ public class MenuItem extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean showing = false;
-    private void formMousePressed(MouseEvent evt) {//GEN-FIRST:event_formMousePressed
+    private void formMousePressed(MouseEvent evt) {
         if (showing) {
             hideMenu();
         } else {
@@ -111,7 +111,7 @@ public class MenuItem extends JPanel {
         if (act != null) {
             act.actionPerformed(null);
         }
-    }//GEN-LAST:event_formMousePressed
+    }
 
     private void showMenu() {
         new Thread(new Runnable() {
