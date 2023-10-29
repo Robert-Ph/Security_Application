@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PanleMenu extends JPanel {
-    private LogoPanel logoPanel = new LogoPanel();
+    private LogoPanel logoPanel ;
     private MenuBar menu = new MenuBar();
     private JPanel panel;
     private java.util.List<MenuItem> list;
@@ -36,7 +36,7 @@ public class PanleMenu extends JPanel {
 
     public PanleMenu(Main main){
         this.setLayout(new BorderLayout());
-
+        logoPanel =new LogoPanel(main);
 
         this.add(logoPanel, BorderLayout.NORTH);
         init(main);

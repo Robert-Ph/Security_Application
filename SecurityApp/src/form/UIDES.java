@@ -1,14 +1,18 @@
 package form;
 
 import model.ButtonDesign;
+import model.SaveData;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 public class UIDES extends JPanel{
     private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
@@ -234,5 +238,103 @@ public class UIDES extends JPanel{
         this.add(nameCipher, BorderLayout.NORTH);
         this.add(panelBody, BorderLayout.CENTER);
         this.add(panelButton, BorderLayout.SOUTH);
+
+
+        //event button
+        buttonOpenFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int returnFile = fileChooser.showOpenDialog(null);
+
+                if(returnFile == JFileChooser.APPROVE_OPTION){
+                    File select = fileChooser.getSelectedFile();
+                    textFieldFile.setText(select.getAbsolutePath());
+                }
+            }
+        });
+
+        buttonSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int result = fileChooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File select = fileChooser.getSelectedFile();
+                    String filePath = select.getAbsolutePath();
+                    String data = textArea.getText();
+
+                    SaveData save = new SaveData();
+                    save.saveData(filePath, data);
+
+                }
+            }
+        });
+
+        buttonCopy.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = textArea.getText();
+                if(text != null){
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection data = new StringSelection(text);
+                    clipboard.setContents(data, null);
+                }
+            }
+        });
+        buttonCopy_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = textArea_Encry.getText();
+                if(text != null){
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection data = new StringSelection(text);
+                    clipboard.setContents(data, null);
+                }
+            }
+        });
+
+        buttonPaste.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable transferable = clipboard.getContents(null);
+
+                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
+                    try {
+                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                        textArea.replaceSelection(text);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (UnsupportedFlavorException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        });
+
+        buttonPaste.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable  transferable = clipboard.getContents(null);
+
+                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
+                    try {
+                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                        textArea.replaceSelection(text);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (UnsupportedFlavorException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        });
     }
 }

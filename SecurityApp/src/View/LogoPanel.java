@@ -3,12 +3,14 @@ package View;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class LogoPanel extends JPanel {
-    public LogoPanel() {
+    public LogoPanel(Main main) {
 
         BufferedImage image = null;
         try {
@@ -23,6 +25,18 @@ public class LogoPanel extends JPanel {
         JLabel label = new JLabel();
         label.setIcon(logo);
         label.setText("CryptaKey");
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                main.remove(main.getForm());
+                main.setForm(new PanelBody());
+                main.add(main.getForm(), BorderLayout.CENTER);
+                main.repaint();
+                main.revalidate();
+            }
+        });
+
         Font customFont = label.getFont().deriveFont(Font.BOLD, 24f);
         label.setFont(customFont);
         label.setForeground(Color.white);

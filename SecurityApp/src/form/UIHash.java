@@ -1,14 +1,19 @@
 package form;
 
+import algorithm.HashCipher;
 import model.ButtonDesign;
+import model.SaveData;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 public class UIHash extends JPanel {
     private final String[] listPlaintext = {"SHA-1", "SHA-224","SHA-256","SHA-384","SHA-512","SHA-512/224","SHA-512/256","MD2","MD4","MD5"};
@@ -66,12 +71,7 @@ public class UIHash extends JPanel {
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
         buttonPaste.setText("Paste");
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("click paste");
-            }
-        });
+
 
         panelButtonEncry.add(labelPathFile);
         panelButtonEncry.add(textFieldFile);
@@ -152,15 +152,13 @@ public class UIHash extends JPanel {
         panelButtonDecry.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         //nut Save
-        ButtonDesign buttonSave_Encr = new ButtonDesign();
-        buttonSave_Encr.setText("Save");
 
         //nut Copy
         ButtonDesign buttonCopy_Encr = new ButtonDesign();
         buttonCopy_Encr.setText("Copy");
 
 
-        panelButtonDecry.add(buttonSave_Encr);
+        panelButtonDecry.add(buttonSave);
         panelButtonDecry.add(buttonCopy_Encr);
 
         paneltext_Encry.add(textArea_Encry, BorderLayout.CENTER);
@@ -184,17 +182,143 @@ public class UIHash extends JPanel {
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-        ButtonDesign buttonEncry = new ButtonDesign();
-        buttonEncry.setText("Generate Hash");
-        buttonEncry.setFont(new Font(buttonEncry.getName(), Font.BOLD, 16));
-        buttonEncry.setColor1(Color.decode("#FF0000"));
-        buttonEncry.setPreferredSize(new Dimension(150,40));
+        ButtonDesign buttonGene = new ButtonDesign();
+        buttonGene.setText("Generate Hash");
+        buttonGene.setFont(new Font(buttonGene.getName(), Font.BOLD, 16));
+        buttonGene.setColor1(Color.decode("#FF0000"));
+        buttonGene.setPreferredSize(new Dimension(150,40));
 
 
-        panelButton.add(buttonEncry);
+        panelButton.add(buttonGene);
 
         this.add(nameCipher, BorderLayout.NORTH);
         this.add(panelBody, BorderLayout.CENTER);
         this.add(panelButton, BorderLayout.SOUTH);
+
+
+        //event button
+        buttonOpenFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int returnFile = fileChooser.showOpenDialog(null);
+
+                if(returnFile == JFileChooser.APPROVE_OPTION){
+                    File select = fileChooser.getSelectedFile();
+                    textFieldFile.setText(select.getAbsolutePath());
+                }
+            }
+        });
+
+        buttonSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int result = fileChooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File select = fileChooser.getSelectedFile();
+                    String filePath = select.getAbsolutePath();
+                    String data = textArea.getText();
+
+                    SaveData save = new SaveData();
+                    save.saveData(filePath, data);
+
+                }
+            }
+        });
+
+        buttonCopy.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = textArea.getText();
+                if(text != null){
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection data = new StringSelection(text);
+                    clipboard.setContents(data, null);
+                }
+            }
+        });
+        buttonCopy_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = textArea_Encry.getText();
+                if(text != null){
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection data = new StringSelection(text);
+                    clipboard.setContents(data, null);
+                }
+            }
+        });
+
+        buttonPaste.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable  transferable = clipboard.getContents(null);
+
+                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
+                    try {
+                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                        textArea.replaceSelection(text);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (UnsupportedFlavorException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        });
+
+        buttonPaste.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable  transferable = clipboard.getContents(null);
+
+                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
+                    try {
+                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                        textArea.replaceSelection(text);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (UnsupportedFlavorException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        });
+        //event hash
+        buttonGene.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String alorithms = (String) listCombobox.getSelectedItem();
+                HashCipher hashCipher = new HashCipher();
+                if(checkBoxText.isSelected()){
+                    String output = hashCipher.hash(textArea.getText(), alorithms);
+                    textArea_Encry.setText(output);
+                }else if((checkBoxFile.isSelected()) && (!textFieldFile.getText().isEmpty())){
+                        String output = null;
+                        try {
+                            output = hashCipher.hashfile(textFieldFile.getText(), alorithms);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if(output.equals("not file")){
+                            JOptionPane.showMessageDialog(null, "File không tồn tại","Lỗi",JOptionPane.CANCEL_OPTION);
+                        }else {
+                            textArea_Encry.setText(output);
+                        }
+                    textFieldFile.setBorder(new LineBorder(Color.black));
+                }else {
+                    textFieldFile.setBorder(new LineBorder(Color.RED));
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn file","Lỗi",JOptionPane.CANCEL_OPTION);
+                }
+            }
+        });
     }
 }

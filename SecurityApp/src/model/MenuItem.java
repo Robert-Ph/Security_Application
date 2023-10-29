@@ -58,7 +58,7 @@ public class MenuItem extends JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+
     private void initComponents() {
 
         jSeparator1 = new JSeparator();
@@ -81,9 +81,9 @@ public class MenuItem extends JPanel {
                         .addComponent(jSeparator1)
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(lbIcon, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lbIcon, GroupLayout.PREFERRED_SIZE, 0, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbName, GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                                .addComponent(lbName, GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -96,10 +96,10 @@ public class MenuItem extends JPanel {
                                                 .addGap(0, 0, Short.MAX_VALUE)
                                                 .addComponent(lbIcon, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, 4, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, 0, GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, 0))
         );
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
     private boolean showing = false;
     private void formMousePressed(MouseEvent evt) {
