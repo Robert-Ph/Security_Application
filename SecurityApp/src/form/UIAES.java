@@ -1,8 +1,11 @@
 package form;
 
+import algorithm.AESCipher;
+import algorithm.CaesarCipher;
 import model.ButtonDesign;
 import model.SaveData;
 
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -15,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class UIAES extends JPanel {
+    private SecretKey secretKey;
 
     private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
     public UIAES(){
@@ -331,6 +335,43 @@ public class UIAES extends JPanel {
                     }
                 }
 
+            }
+        });
+
+        //event
+        buttonEncry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String input = textArea.getText();
+                AESCipher cipher = new AESCipher();
+                cipher.setLengthKey(128);
+                String output = null;
+                String k ="";
+                try {
+                    secretKey = cipher.generateAESKey();
+                    k = cipher.secretKeyToString(secretKey);
+                    output = cipher.encryptAES(input,secretKey);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                textArea_Encry.setText(output);
+                textKey.setText(k);
+            }
+        });
+
+        buttonDecry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String input = textArea.getText();
+                AESCipher cipher = new AESCipher();
+                cipher.setLengthKey(128);
+                String output = null;
+                try {
+                    output = cipher.decryptAES(input,secretKey);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                textArea_Encry.setText(output);
             }
         });
     }

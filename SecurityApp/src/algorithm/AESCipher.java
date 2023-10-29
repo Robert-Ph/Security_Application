@@ -13,12 +13,20 @@ public class AESCipher {
     private SecretKey key;
     private int lengthKey;
 
+    public AESCipher()  {
+
+    }
+
     public SecretKey generateAESKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         SecureRandom secureRandom = new SecureRandom();
         keyGenerator.init(lengthKey, secureRandom); // 256-bit AES key
         key = keyGenerator.generateKey();
         return key;
+    }
+    public  String secretKeyToString(SecretKey secretKey) {
+        byte[] keyBytes = secretKey.getEncoded();
+        return Base64.getEncoder().encodeToString(keyBytes);
     }
 
     public  String encryptAES(String data, SecretKey secretKey) throws Exception {
