@@ -1,7 +1,7 @@
 package form;
 
-import algorithm.AESCipher;
-import algorithm.CaesarCipher;
+
+import alorithms.AESCipher;
 import model.ButtonDesign;
 import model.SaveData;
 
@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 public class UIAES extends JPanel {
     private SecretKey secretKey;
@@ -46,7 +47,7 @@ public class UIAES extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel panelText = new JPanel();
-        JTextArea textArea = new JTextArea(14,60);
+        TextArea textArea = new TextArea(13,92);
         panelText.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -74,12 +75,10 @@ public class UIAES extends JPanel {
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
         buttonPaste.setText("Paste");
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("click paste");
-            }
-        });
+
+        //button clear
+        ButtonDesign buttonClear = new ButtonDesign();
+        buttonClear.setText("Clear");
 
         panelButtonEncry.add(labelPathFile);
         panelButtonEncry.add(textFieldFile);
@@ -87,6 +86,7 @@ public class UIAES extends JPanel {
         panelButtonEncry.add(buttonSave);
         panelButtonEncry.add(buttonCopy);
         panelButtonEncry.add(buttonPaste);
+        panelButtonEncry.add(buttonClear);
 
         /*
         ##########################################################
@@ -178,7 +178,8 @@ public class UIAES extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel paneltext_Encry = new JPanel();
-        JTextArea textArea_Encry = new JTextArea(14,60);
+        TextArea textArea_Encry = new TextArea(13,92);
+        textArea_Encry.setEditable(false);
         paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -298,25 +299,7 @@ public class UIAES extends JPanel {
             }
         });
 
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable transferable = clipboard.getContents(null);
 
-                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
-                    try {
-                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    } catch (UnsupportedFlavorException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-
-            }
-        });
 
         buttonPaste.addActionListener(new ActionListener() {
             @Override
@@ -327,7 +310,7 @@ public class UIAES extends JPanel {
                 if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
                     try {
                         String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
+                        textArea.append(text);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (UnsupportedFlavorException ex) {
@@ -338,24 +321,58 @@ public class UIAES extends JPanel {
             }
         });
 
+
+        buttonCreateKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AESCipher aesCipher = new AESCipher();
+                try {
+                    aesCipher.setLengthKey(128);
+                    secretKey = aesCipher.generateAESKey();
+                    String key = aesCipher.toStringKey(secretKey);
+                    textKey.setText(key);
+                } catch (NoSuchAlgorithmException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        buttonUpgrade_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(textArea_Encry.getText());
+                textArea_Encry.setText("");
+            }
+        });
+
+        buttonClear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText("");
+            }
+        });
+
+
+
+
         //event
         buttonEncry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String input = textArea.getText();
                 AESCipher cipher = new AESCipher();
-                cipher.setLengthKey(128);
+//                cipher.setLengthKey(128);
                 String output = null;
-                String k ="";
+//                String k ="";
                 try {
-                    secretKey = cipher.generateAESKey();
-                    k = cipher.secretKeyToString(secretKey);
+//                    secretKey = cipher.generateAESKey();
+//                    k = cipher.secretKeyToString(secretKey);
                     output = cipher.encryptAES(input,secretKey);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
                 textArea_Encry.setText(output);
-                textKey.setText(k);
+//                textKey.setText(k);
             }
         });
 

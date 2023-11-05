@@ -1,4 +1,4 @@
-package algorithm;
+package alorithms;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class HashCipher {
     public String SHA_1 = "SHA-1";
@@ -33,15 +32,16 @@ public class HashCipher {
         return "";
     }
 
-    public String hashfile(String filePath, String aloriithms) throws Exception{
+    public String hashfile(String filePath, String alorithms) throws Exception{
         File file = new File(filePath);
         if(file.isFile()){
-            MessageDigest messageDigest = MessageDigest.getInstance(aloriithms);
+            MessageDigest messageDigest = MessageDigest.getInstance(alorithms);
             InputStream inputFile = new BufferedInputStream(new FileInputStream(filePath));
             DigestInputStream digestInputStream = new DigestInputStream(inputFile, messageDigest);
 
             byte[] buffer = new byte[1024];
             int read;
+
             while ((read = inputFile.read(buffer))!=-1){
                 messageDigest.update(buffer,0,read);
             }
@@ -60,13 +60,11 @@ public class HashCipher {
         }else {
             return "not file";
         }
-
-
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         HashCipher sha = new HashCipher();
-        String out = sha.hash("Nong lam", "MD5");
+        String out = sha.hashfile("F:\\Lab\\Security_Application\\SecurityApp\\src\\algorithm\\text", "SHA-1");
         System.out.println(out);
     }
 }

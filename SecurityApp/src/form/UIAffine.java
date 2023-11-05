@@ -1,7 +1,7 @@
 package form;
 
-import algorithm.AffineCipher;
-import algorithm.CaesarCipher;
+
+import alorithms.AffineCipher;
 import model.ButtonDesign;
 import model.SaveData;
 

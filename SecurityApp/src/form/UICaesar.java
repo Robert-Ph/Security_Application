@@ -1,6 +1,6 @@
 package form;
 
-import algorithm.CaesarCipher;
+import alorithms.CaesarCipher;
 import model.ButtonDesign;
 import model.SaveData;
 
@@ -326,10 +326,20 @@ public class UICaesar extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String input = textArea.getText();
-                int key = Integer.parseInt(textKey.getText());
-                CaesarCipher cipher = new CaesarCipher();
-                String output = cipher.encryption(input,key);
-                textArea_Encry.setText(output);
+
+                if (textKey.getText().isEmpty() && input.isEmpty()){
+                    JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                } else if (input.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                } else if (textKey.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                } else {
+                    int key = Integer.parseInt(textKey.getText());
+                    CaesarCipher cipher = new CaesarCipher();
+                    String output = cipher.encryption(input,key);
+                    textArea_Encry.setText(output);
+                }
+
             }
         });
 
@@ -337,10 +347,19 @@ public class UICaesar extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String input = textArea.getText();
-                int key = Integer.parseInt(textKey.getText());
-                CaesarCipher cipher = new CaesarCipher();
-                String output = cipher.decryption(input,key);
-                textArea_Encry.setText(output);
+
+                if (textKey.getText().isEmpty() && input.isEmpty()){
+                    JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                } else if (input.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                } else if (textKey.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                } else {
+                    int key = Integer.parseInt(textKey.getText());
+                    CaesarCipher cipher = new CaesarCipher();
+                    String output = cipher.decryption(input,key);
+                    textArea_Encry.setText(output);
+                }
             }
         });
     }

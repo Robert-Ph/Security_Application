@@ -1,14 +1,17 @@
-package algorithm;
+package alorithms;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class AffineCipher {
 
-    private int a;
-    private int b;
+//    private int a;
+//    private int b;
     public String encryption(String data, int x, int y){
         String result="";
-        if(checkKey(x,y)){
+        if(checkKey(x,y, 26)){
             for (int i=0; i< data.length(); i++ ){
                 if (Character.isLetter(data.charAt(i))){
                     result +=  Character.isLowerCase(data.charAt(i)) ? ((char) (Math.floorMod(x*(data.charAt(i) - 97) + y, 26)+97)) : ((char) (Math.floorMod(x*(data.charAt(i) - 65) + y, 26)+65));
@@ -26,7 +29,7 @@ public class AffineCipher {
 
     public String decryption(String data, int x, int y){
         String result="";
-        if (checkKey(x,y)){
+        if (checkKey(x,y, 26)){
             int inverseOfX = findModularInverse(x, 26);
             for (int i=0; i< data.length(); i++ ){
                 if (Character.isLetter(data.charAt(i))){
@@ -43,17 +46,73 @@ public class AffineCipher {
         return result;
     }
 
-    public void encryFile(String sourceFile, String desFile) throws Exception {
-        if (checkKey(a,b)){
+    public String encryption_vie(String data, int x, int y){
+        Map<Integer, String> p = new HashMap<>();
+        new ReadFile().readFile(p, "Plaintext and Ciphertext\\Vietnames_Alphabet_sound" );
+        String result="";
+        if(checkKey(x,y, 94)){
+            for (int i=0; i< data.length(); i++ ){
+                if (Character.isLetter(data.charAt(i))){
+                    Set<Integer> set = p.keySet();
+                    for (Integer k : set) {
+                        String kytu = String.valueOf(data.charAt(i));
+                        if (kytu.toUpperCase().equals(p.get(k))) {
+                            result += Character.isLowerCase(data.charAt(i))? p.get(Math.floorMod((x*k)+ y, 94)).toLowerCase() : p.get(Math.floorMod((x*k)+ y, 94));
+                        }
+                    }
+//                    result +=  Character.isLowerCase(data.charAt(i)) ? ((char) (Math.floorMod(x*(data.charAt(i) - 97) + y, 26)+97)) : ((char) (Math.floorMod(x*(data.charAt(i) - 65) + y, 26)+65));
+                } else if (Character.isDigit(data.charAt(i))) {
+                    result += (char) (Math.floorMod(x*(data.charAt(i) - 48) + y, 10)+48);
+                }else {
+                    result += data.charAt(i);
+                }
+            }
+        }else{
+            return "Invalid key";
+        }
+        return result;
+    }
+
+    public String decryption_vie(String data, int x, int y){
+        Map<Integer, String> p = new HashMap<>();
+        new ReadFile().readFile(p, "Plaintext and Ciphertext\\Vietnames_Alphabet_sound" );
+        String result="";
+        if (checkKey(x,y, 94)){
+            int inverseOfX = findModularInverse(x, 94);
+            for (int i=0; i< data.length(); i++ ){
+                if (Character.isLetter(data.charAt(i))){
+                    Set<Integer> set = p.keySet();
+                    for (Integer k : set) {
+                        String kytu = String.valueOf(data.charAt(i));
+                        if (kytu.toUpperCase().equals(p.get(k))) {
+                            result += Character.isLowerCase(data.charAt(i))? p.get(Math.floorMod(inverseOfX*(k - y), 94)).toLowerCase() : p.get(Math.floorMod(inverseOfX*(k- y), 94));
+                        }
+                    }
+//                    result +=  Character.isLowerCase(data.charAt(i)) ? ((char) (Math.floorMod(inverseOfX*(data.charAt(i) - 97 - y), 26)+97)) : ((char) (Math.floorMod(inverseOfX*(data.charAt(i) - 65 - y), 26)+65));
+                } else if (Character.isDigit(data.charAt(i))) {
+                    result += (char) (Math.floorMod(inverseOfX*(Math.abs(data.charAt(i) - 48 - y)), 10)+48);
+                }else {
+                    result += data.charAt(i);
+                }
+            }
+        }else{
+            return "Invalid key";
+        }
+        return result;
+    }
+
+    public void encryFile(String sourceFile, String desFile, int a, int b) throws Exception {
+        if (checkKey(a,b, 26)){
             File file = new File(sourceFile);
             if(file.isFile()){
                 BufferedReader fis = new BufferedReader(new FileReader(file));
                 BufferedWriter fos = new BufferedWriter(new FileWriter(desFile));
-
+                String data ="";
                 String byteRead;
                 while ((byteRead = fis.readLine())!=null){
-                    fos.write(encryption(byteRead, a, b));
+                    data+=byteRead;
                 }
+                fos.write(encryption(data, a, b));
                 fis.close();
                 fos.flush();
                 fos.close();
@@ -66,8 +125,8 @@ public class AffineCipher {
 
     }
 
-    public void decryFile(String sourceFile, String desFile) throws Exception {
-        if (checkKey(a,b)){
+    public void decryFile(String sourceFile, String desFile, int a, int b) throws Exception {
+        if (checkKey(a,b, 26)){
             File file = new File(sourceFile);
             if(file.isFile()){
                 BufferedReader fis = new BufferedReader(new FileReader(file));
@@ -89,11 +148,11 @@ public class AffineCipher {
 
     }
 
-    public boolean checkKey(int x, int y){
-        if(x > 26 || x < 1 || y > 26 || y<1){
+    public boolean checkKey(int x, int y, int size){
+        if(x > size || x < 1 || y > size || y<1){
             return false;
         }else{
-            int m = 26;
+            int m = size;
             while (m != 0) {
                 int temp = m;
                 m = x % m;
@@ -137,29 +196,39 @@ public class AffineCipher {
         }
     }
 
-    public int getA() {
-        return a;
-    }
-
-    public void setA(int a) {
-        this.a = a;
-    }
-
-    public int getB() {
-        return b;
-    }
-
-    public void setB(int b) {
-        this.b = b;
-    }
+//    public int getA() {
+//        return a;
+//    }
+//
+//    public void setA(int a) {
+//        this.a = a;
+//    }
+//
+//    public int getB() {
+//        return b;
+//    }
+//
+//    public void setB(int b) {
+//        this.b = b;
+//    }
 
     public static void main(String[] args) {
         AffineCipher a = new AffineCipher();
-        String text ="Vieetjnam 123";
-        int x=27;
+        String text ="Thinh Thinh";
+        int x=3;
         int y=11;
         String Y =a.encryption(text,x,y);
         System.out.println(Y);
         System.out.println(a.decryption(Y, x, y));
+        System.out.println(a.findModularInverse(3, 26));
+        System.out.println(Math.floorMod(9*(52 - 48) - y, 10)+48);
+
+//        try {
+//            a.encryFile("src\\example.txt","src\\e.txt", 3,11);
+//            a.decryFile("src\\e.txt","src\\e1.txt", 3,11);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+
     }
 }

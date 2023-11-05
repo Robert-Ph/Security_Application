@@ -1,6 +1,7 @@
 package form;
 
-import algorithm.HashCipher;
+
+import alorithms.HashCipher;
 import model.ButtonDesign;
 import model.SaveData;
 

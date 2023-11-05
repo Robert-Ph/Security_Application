@@ -13,7 +13,6 @@ public class Main extends JFrame{
 
     private JPanel form;
     private PanleMenu menu;
-    private List<MenuItem> list;
 
     public JPanel getForm() {
         return form;

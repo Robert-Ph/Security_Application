@@ -1,5 +1,6 @@
-package algorithm;
+package alorithms;
 
+import java.io.*;
 import java.util.*;
 
 public class TranspositionCipher {
@@ -13,10 +14,16 @@ public class TranspositionCipher {
         int index=0;
         Map<Integer, Integer> textKey = textConverter(key);
         String[][] textMatrix = matrixCalculation(data, key.length());
+//        String input = data.replace(" ", "");
         for (int i=0; i<textMatrix.length; i++){
             for (int j=0; j <key.length(); j++){
-                textMatrix[i][j] = String.valueOf(data.charAt(index));
-                index++;
+                if (index<data.length()){
+                    textMatrix[i][j] = String.valueOf(data.charAt(index));
+                    index++;
+                }else {
+                    textMatrix[i][j] = "";
+                }
+
             }
         }
 
@@ -38,8 +45,13 @@ public class TranspositionCipher {
         Set<Integer> keySet = textKey.keySet();
         for (Integer j : keySet) {
             for (int i=0; i< textMatrix.length; i++){
-                textMatrix[i][j] = String.valueOf(data.charAt(index));
-                index++;
+                if (index<data.length()){
+                    textMatrix[i][j] = String.valueOf(data.charAt(index));
+                    index++;
+                }else {
+                    textMatrix[i][j] = "";
+                }
+
             }
         }
         for (int i=0; i<textMatrix.length; i++){
@@ -54,7 +66,8 @@ public class TranspositionCipher {
 
         public String[][] matrixCalculation (String text,int key){
             String[][] result;
-            String p = text.replace(" ", "");
+//            String p = text.replace(" ", "");
+            String p = text;
             if ((p.length() % key) == 0) {
                 result = new String[p.length() / key][key];
             } else {
@@ -63,14 +76,56 @@ public class TranspositionCipher {
             return result;
         }
 
-        public Map<Integer, Integer> textConverter (String text){
+    public void encryFile(String sourceFile, String desFile, String key) throws Exception {
+        File file = new File(sourceFile);
+        String data ="";
+        if(file.isFile()){
+            BufferedReader fis = new BufferedReader(new FileReader(file));
+            BufferedWriter fos = new BufferedWriter(new FileWriter(desFile));
+
+            String byteRead;
+            while ((byteRead = fis.readLine())!=null){
+                data += byteRead;
+            }
+            fos.write(encryption(data, key));
+            fis.close();
+            fos.flush();
+            fos.close();
+
+        }else {
+            System.out.println("This is not file!");
+        }
+    }
+
+    public void decryFile(String sourceFile, String desFile, String key) throws Exception {
+        File file = new File(sourceFile);
+        String data="";
+        if(file.isFile()){
+            BufferedReader fis = new BufferedReader(new FileReader(file));
+            BufferedWriter fos = new BufferedWriter(new FileWriter(desFile));
+
+            String byteRead;
+            while ((byteRead = fis.readLine())!=null){
+                data+=byteRead;
+
+            }
+            fos.write(decryption(data, key));
+            fis.close();
+            fos.flush();
+            fos.close();
+        }else {
+            System.out.println("This is not file!");
+        }
+    }
+
+
+    public Map<Integer, Integer> textConverter (String text){
         Map<Integer,Integer> result = new HashMap<>();
         Map<Integer,Integer> r = new HashMap<>();
         String t = text.toUpperCase();
             for (int i = 0; i < t.length(); i++) {
             Integer k = (int) t.charAt(i);
             r.put(i, k);
-
             }
 //       // Chuyển các mục của HashMap thành danh sách
         List<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(r.entrySet());
@@ -89,13 +144,21 @@ public class TranspositionCipher {
     public static void main(String[] args) {
 
         TranspositionCipher t = new TranspositionCipher();
-        String data = "Nong Lam h";
-        String key = "hh";
+        String data = "Thịnh thịnh";
+        String key = "hi";
         String[][] r= t.matrixCalculation(data,key.length());
         String y = t.encryption(data,key);
         System.out.println(y);
         System.out.println(t.decryption(y,key));
 
+
+
+//        try {
+//            t.encryFile("src\\example.txt","src\\e.txt", key);
+//            t.decryFile("src\\e.txt","src\\e1.txt", key);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }
 

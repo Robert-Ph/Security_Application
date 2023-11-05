@@ -1,4 +1,4 @@
-package algorithm;
+package alorithms;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -8,40 +8,39 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-public class DESCipher {
+public class AESCipher {
 
     private SecretKey key;
+    private int lengthKey;
 
-
-    public  SecretKey generateDESKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
+    public SecretKey generateAESKey() throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         SecureRandom secureRandom = new SecureRandom();
-        keyGenerator.init(56, secureRandom); // 56-bit DES key
+        keyGenerator.init(lengthKey, secureRandom); // 256-bit AES key
         key = keyGenerator.generateKey();
         return key;
     }
 
-    public  String encryptDES(String data, SecretKey secretKey) throws Exception {
-        Cipher cipher = Cipher.getInstance("DES");
+    public  String encryptAES(String data, SecretKey secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
         byte[] encryptedBytes = cipher.doFinal(data.getBytes("UTF-8"));
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    public  String decryptDES(String encryptedData, SecretKey secretKey) throws Exception {
-        Cipher cipher = Cipher.getInstance("DES");
+    public String decryptAES(String encryptedData, SecretKey secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
         byte[] encryptedBytes = Base64.getDecoder().decode(encryptedData);
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
         return new String(decryptedBytes, "UTF-8");
     }
-
     public void encryFile(String sourceFile, String desFile) throws Exception{
         if(key == null) throw new FileNotFoundException();
 
         File file = new File(sourceFile);
         if (file.isFile()){
-            Cipher cipher = Cipher.getInstance("DES");
+            Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, key);
 
             BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file));
@@ -69,7 +68,7 @@ public class DESCipher {
 
         File file = new File(sourceFile);
         if (file.isFile()){
-            Cipher cipher = Cipher.getInstance("DES");
+            Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, key);
 
             BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file));
@@ -91,6 +90,10 @@ public class DESCipher {
             System.out.println("This is not a file!");
         }
     }
+
+    public String toStringKey(SecretKey key){
+        return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
     public SecretKey getKey() {
         return key;
     }
@@ -99,22 +102,38 @@ public class DESCipher {
         this.key = key;
     }
 
-    public static void main(String[] args) throws Exception {
-        DESCipher des = new DESCipher();
-        // Khởi tạo dữ liệu cần mã hóa
-        String originalData = "Hello, DES!";
-
-        // Tạo khóa bí mật DES
-        SecretKey secretKey = des.generateDESKey();
-        String base64Key = Base64.getEncoder().encodeToString(secretKey.getEncoded());
-        System.out.println("Khóa DES: " + base64Key);
-//        // Mã hóa dữ liệu
-//        String encryptedData = des.encryptDES(originalData, secretKey);
-//        System.out.println("Encrypted Data: " + encryptedData);
-//
-//        // Giải mã dữ liệu
-//        String decryptedData = des.decryptDES(encryptedData, secretKey);
-//        System.out.println("Decrypted Data: " + decryptedData);
+    public int getLengthKey() {
+        return lengthKey;
     }
+
+    public void setLengthKey(int lengthKey) {
+        this.lengthKey = lengthKey;
+    }
+
+    public static void main(String[] args) throws Exception {
+        // Khởi tạo dữ liệu cần mã hóa
+        String originalData = "Thịnh thịnh";
+
+        AESCipher aesCipher = new AESCipher();
+        aesCipher.setLengthKey(128);
+        // Tạo khóa bí mật AES
+        SecretKey secretKey = aesCipher.generateAESKey();
+
+        // Mã hóa dữ liệu
+        String encryptedData = aesCipher.encryptAES(originalData, secretKey);
+        System.out.println("Encrypted Data: " + encryptedData);
+
+        // Giải mã dữ liệu
+        String decryptedData = aesCipher.decryptAES(encryptedData, secretKey);
+        System.out.println("Decrypted Data: " + decryptedData);
+
+//        try {
+//            aesCipher.encryFile("src\\example.txt","src\\e.txt");
+//            aesCipher.decryFile("src\\e.txt","src\\e1.txt");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+    }
+
 
 }
