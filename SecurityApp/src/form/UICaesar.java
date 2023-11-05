@@ -1,5 +1,6 @@
 package form;
 
+import View.Main;
 import alorithms.CaesarCipher;
 import model.ButtonDesign;
 import model.SaveData;
@@ -14,9 +15,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class UICaesar extends JPanel {
-
+    private Main main;
     private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
-    public UICaesar(){
+    public UICaesar(Main main){
+        this.main=main;
         init();
     }
 
@@ -30,7 +32,7 @@ public class UICaesar extends JPanel {
         nameCipher.setHorizontalAlignment(SwingConstants.CENTER);
         nameCipher.setVerticalAlignment(SwingConstants.CENTER);
         nameCipher.setForeground(Color.red);
-//        nameCipher.setIcon(new ImageIcon("ImageIcon\\help.png"));
+
         nameCipher.setPreferredSize(new Dimension(1000, 30));
 
         JPanel panelBody = new JPanel();
@@ -243,8 +245,9 @@ public class UICaesar extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setPreferredSize(new Dimension(700, 400));
+                fileChooser.setCurrentDirectory(new File(main.getPathToSaveFile()));
                 int result = fileChooser.showOpenDialog(null);
-
+                
                 if (result == JFileChooser.APPROVE_OPTION){
                     File select = fileChooser.getSelectedFile();
                     String filePath = select.getAbsolutePath();
@@ -253,7 +256,9 @@ public class UICaesar extends JPanel {
                     SaveData save = new SaveData();
                     save.saveData(filePath, data);
 
+
                 }
+
             }
         });
 

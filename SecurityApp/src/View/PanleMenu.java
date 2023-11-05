@@ -73,7 +73,7 @@ public class PanleMenu extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 main.remove(main.getForm());
-                main.setForm(new UICaesar());
+                main.setForm(new UICaesar(main));
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
