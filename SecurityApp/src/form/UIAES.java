@@ -340,6 +340,8 @@ public class UIAES extends JPanel {
         buttonUpgrade_Encr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+
                 textArea.setText(textArea_Encry.getText());
                 textArea_Encry.setText("");
             }

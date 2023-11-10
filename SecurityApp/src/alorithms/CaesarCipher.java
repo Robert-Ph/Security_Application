@@ -71,7 +71,7 @@ public class CaesarCipher {
         return result;
     }
 
-    public String decryption_vie(String data, Integer key){
+    public String decryption_vie(String data, int key){
         Map<Integer,String> p = new HashMap<>();
         new ReadFile().readFile(p,"Plaintext and Ciphertext\\Vietnames_Alphabet_sound" );
         String result="";
