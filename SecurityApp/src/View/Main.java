@@ -13,6 +13,15 @@ public class Main extends JFrame{
 
     private JPanel form;
     private PanleMenu menu;
+    private String pathToSaveFile="";
+
+    public String getPathToSaveFile() {
+        return pathToSaveFile;
+    }
+
+    public void setPathToSaveFile(String pathToSaveFile) {
+        this.pathToSaveFile = pathToSaveFile;
+    }
 
     public JPanel getForm() {
         return form;
@@ -29,7 +38,9 @@ public class Main extends JFrame{
         this.setTitle("CryptaKey");
         ImageIcon image = new ImageIcon("ImageIcon\\logo.png");
 
-        form = new PanelBody();
+
+//        form = new PanelBody();
+        form = new panel(this);
         menu = new PanleMenu(this);
         this.getContentPane().add(menu, BorderLayout.WEST);
         this.getContentPane().add(form, BorderLayout.CENTER);
@@ -46,5 +57,7 @@ public class Main extends JFrame{
     public static void main(String[] args) {
 
         new Main();
+
+
     }
 }
