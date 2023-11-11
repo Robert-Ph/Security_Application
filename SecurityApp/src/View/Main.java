@@ -4,9 +4,11 @@ import form.*;
 import model.MenuItem;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.List;
 
 public class Main extends JFrame{
@@ -32,6 +34,7 @@ public class Main extends JFrame{
     }
 
     public Main(){
+        this.pathToSaveFile = getDocumentsDirectory();
         init();
     }
     public void init(){
@@ -54,6 +57,10 @@ public class Main extends JFrame{
     }
 
 
+    public  String getDocumentsDirectory() {
+        FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+        return fileSystemView.getDefaultDirectory().getPath();
+    }
     public static void main(String[] args) {
 
         new Main();

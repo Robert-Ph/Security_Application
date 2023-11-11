@@ -53,6 +53,7 @@ public class panel extends JPanel {
 
         JLabel  titleSeting = new JLabel("Địa chỉ lưu dữ liệu:");
         JTextField input = new JTextField(24);
+        input.setText(main.getPathToSaveFile());
         ButtonDesign buttonOpen = new ButtonDesign();
         buttonOpen.setText("chọn");
 

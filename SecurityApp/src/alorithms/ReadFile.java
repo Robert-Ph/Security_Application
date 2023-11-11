@@ -1,9 +1,6 @@
 package alorithms;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,6 +72,29 @@ public class ReadFile {
             System.out.println("This is not file!");
         }
         return data;
+    }
+
+    public void writeFileKeyHill(String path, int[][] arrkey){
+        try {
+            BufferedWriter file = new BufferedWriter(new FileWriter(path));
+
+            for (int i=0; i<arrkey.length; i++){
+                String out = "";
+                for (int j=0; j<arrkey[0].length; j++){
+                    out += arrkey[i][j]+",";
+
+                }
+                file.write(out);
+                file.newLine();
+            }
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
     }
     public static void main(String[] args) { ReadFile r = new ReadFile();
         Map<Integer, String> p = new HashMap<>();

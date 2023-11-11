@@ -2,6 +2,7 @@ package form;
 
 import View.Main;
 import alorithms.HillCipher;
+import alorithms.ReadFile;
 import model.ButtonDesign;
 import model.SaveData;
 
@@ -19,10 +20,10 @@ import java.security.NoSuchAlgorithmException;
 
 public class UIHill extends JPanel {
     private HillCipher hillCipher;
-    private static int[][] arrKey;
+    private  int[][] arrKey;
     private Main main;
     private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
-    private final String[] sizeKey = {"2", "3","4","5","6","7","8","9"};
+    private final String[] sizeKey = {"2", "3","4"};
 
     public UIHill(Main main) {
         this.main = main;
@@ -61,12 +62,15 @@ public class UIHill extends JPanel {
         JLabel labelPathFile = new JLabel("File");
 
         JTextField textFieldFile = new JTextField(17);
-        textFieldFile.setBorder(new EmptyBorder(0, 0, 0, 0));
+//        textFieldFile.setBorder(new EmptyBorder(0, 0, 0, 0));
         textFieldFile.setPreferredSize(new Dimension(15, 26));
+//        textFieldFile.setEnabled(false);
+        textFieldFile.setEditable(false);
 
         //nut Open File
         ButtonDesign buttonOpenFile = new ButtonDesign();
         buttonOpenFile.setText("Open file");
+        buttonOpenFile.setEnabled(false);
 
         //nut Save
         ButtonDesign buttonSave = new ButtonDesign();
@@ -147,7 +151,7 @@ public class UIHill extends JPanel {
         JLabel labelType = new JLabel("Type: ");
         JCheckBox checkBoxText = new JCheckBox("Text");
         checkBoxText.setSelected(true);
-        JCheckBox checkBoxFile = new JCheckBox("File");
+//        JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,7 +159,7 @@ public class UIHill extends JPanel {
 
                 // Đặt tất cả các JCheckBox về trạng thái không chọn
                 checkBoxText.setSelected(false);
-                checkBoxFile.setSelected(false);
+//                checkBoxFile.setSelected(false);
 
                 // Đặt trạng thái của JCheckBox được chọn
                 selectedCheckBox.setSelected(true);
@@ -164,13 +168,13 @@ public class UIHill extends JPanel {
 
 
         checkBoxText.addActionListener(actionListener);
-        checkBoxFile.addActionListener(actionListener);
+//        checkBoxFile.addActionListener(actionListener);
 
         panelPlaintext.add(labelplainCipher);
         panelPlaintext.add(listCombobox);
         panelPlaintext.add(labelType);
         panelPlaintext.add(checkBoxText);
-        panelPlaintext.add(checkBoxFile);
+//        panelPlaintext.add(checkBoxFile);
 
         panelKeyandPlaintext.add(panelKey);
         panelKeyandPlaintext.add(panelPlaintext);
@@ -361,6 +365,26 @@ public class UIHill extends JPanel {
                         arrKey = arr;
                         textKey.setText(hillCipher.toStringKeyArray(arrKey));
                     }
+                }
+            }
+        });
+
+        buttonSaveKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int result = fileChooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File select = fileChooser.getSelectedFile();
+                    String filePath = select.getAbsolutePath();
+                    String data = textArea.getText();
+
+                    SaveData save = new SaveData();
+                    ReadFile saveKey = new ReadFile();
+                    saveKey.writeFileKeyHill(filePath, arrKey);
+
                 }
             }
         });
