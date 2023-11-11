@@ -1,111 +1,227 @@
 package alorithms;
 
+import model.Matrix;
+
+import java.io.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+
 public class HillCipher {
+
+    private Matrix matrix = new Matrix();
     private static final int MODULUS = 26;
 
-    public static void main(String[] args) {
-        int[][] keyMatrix = {{6, 24, 1}, {13, 16, 10}, {20, 17, 15}};
-        String plaintext = "HELLOHILL";
-
-        String encryptedText = hillCipherEncrypt(plaintext, keyMatrix);
-        System.out.println("Văn bản đã mã hóa: " + encryptedText);
-
-        String decryptedText = hillCipherDecrypt(encryptedText, keyMatrix);
-        System.out.println("Văn bản đã giải mã: " + decryptedText);
-
-        if (plaintext.equals(decryptedText)) {
-            System.out.println("Kiểm tra thành công! Văn bản gốc và văn bản giải mã giống nhau.");
-        } else {
-            System.out.println("Kiểm tra thất bại! Văn bản gốc và văn bản giải mã không giống nhau.");
-        }
+    public Matrix getMatrix() {
+        return matrix;
     }
 
-    public static String hillCipherEncrypt(String plaintext, int[][] keyMatrix) {
-        plaintext = plaintext.replaceAll("\\s", "");
-        int n = keyMatrix.length;
-        int[] plaintextVector = new int[n];
+    public static void main(String[] args) {
+        HillCipher hillCipher = new HillCipher();
+        int[][] keyMatrix = {{3, 3}, {2, 5}};
+        String plaintext = "HELPL";
 
+        String encryptedText = hillCipher.hillCipherEncrypt(plaintext, keyMatrix);
+        System.out.println("Văn bản đã mã hóa: " + encryptedText);
+
+        String decryptedText =hillCipher.hillCipherDecrypt(encryptedText, keyMatrix);
+        System.out.println("Văn bản đã giải mã: " + decryptedText);
+
+//        if (plaintext.equals(decryptedText)) {
+//            System.out.println("Kiểm tra thành công! Văn bản gốc và văn bản giải mã giống nhau.");
+//        } else {
+//            System.out.println("Kiểm tra thất bại! Văn bản gốc và văn bản giải mã không giống nhau.");
+//        }
+
+//        int[][] result=hillCipher.splitStringDecr("DPLE",2);
+        int[][] result=hillCipher.createKey(2);
+        int[] r = hillCipher.matrix.multiplyMatrices(result[0],keyMatrix);
+        System.out.println(r[0]);
+
+
+        for (int i = 0; i < result.length; i++) {
+            for (int j = 0; j < result[i].length; j++) {
+                System.out.print(result[i][j] + " ");
+            }
+            System.out.println();
+        }
+        String data ="DPLE";
+
+        String le = data.substring(data.length()-keyMatrix[0].length);
+        int[] arr = new int[le.length()];
+        for (int i=0; i<le.length();i++){
+            arr[i] =(int) le.charAt(i)-65;
+        }
+        int[][] key = hillCipher.matrix.calculateInverseUsingDeterminant(keyMatrix);
+        int[] numsize = hillCipher.matrix.multiplyMatrices(arr, key);
+
+        System.out.println(Math.floorMod(numsize[0],26));
+    }
+
+    public int[][] createKey(int size){
+        int[][] result = matrix.generateRandomTwoDArray(size);
+        return matrix.checkGenerateMatrix(result) ? result : createKey(size);
+
+    }
+
+
+
+    public  String hillCipherEncrypt(String data, int[][] keyMatrix) {
+
+        int n = keyMatrix.length;
+        int[][] m = splitString(data,n);
         StringBuilder encryptedText = new StringBuilder();
 
-        for (int i = 0; i < plaintext.length(); i += n) {
-            for (int j = 0; j < n; j++) {
-                plaintextVector[j] = (int) (plaintext.charAt(i + j) - 'A');
-            }
-
-            for (int j = 0; j < n; j++) {
-                int sum = 0;
-                for (int k = 0; k < n; k++) {
-                    sum += keyMatrix[j][k] * plaintextVector[k];
+        if (matrix.calculateDeterminant(keyMatrix)>0 && matrix.checkKey(matrix.calculateDeterminant(keyMatrix),26)){
+            for (int i=0; i<m.length; i++){
+                int[] input = m[i];
+                int[] out = matrix.multiplyMatrices(input,keyMatrix);
+                for (int j=0; j<out.length;j++){
+                    char text = (char) (Math.floorMod(out[j], 26) + 65);
+                    encryptedText.append(text);
                 }
-                encryptedText.append((char) (sum % MODULUS + 'A'));
             }
         }
-
         return encryptedText.toString();
     }
 
-    public static String hillCipherDecrypt(String encryptedText, int[][] keyMatrix) {
+    public  String hillCipherDecrypt(String data, int[][] keyMatrix) {
         int n = keyMatrix.length;
-        int[] encryptedVector = new int[n];
 
+        int[][] key = matrix.calculateInverseUsingDeterminant(keyMatrix);
         StringBuilder decryptedText = new StringBuilder();
 
-        int determinant = calculateDeterminant(keyMatrix, n);
-        int detInverse = findMultiplicativeInverse(determinant, MODULUS);
-
-        for (int i = 0; i < encryptedText.length(); i += n) {
-            for (int j = 0; j < n; j++) {
-                encryptedVector[j] = (int) (encryptedText.charAt(i + j) - 'A');
-            }
-
-            for (int j = 0; j < n; j++) {
-                int sum = 0;
-                for (int k = 0; k < n; k++) {
-                    sum += keyMatrix[k][j] * encryptedVector[k];
-                }
-                int result = (detInverse * (sum % MODULUS)) % MODULUS;
-                decryptedText.append((char) ((result + MODULUS) % MODULUS + 'A'));
-            }
+        String le = data.substring(data.length()-n);
+        int[] arr = new int[le.length()];
+        for (int i=0; i<le.length();i++){
+            arr[i] =(int) le.charAt(i)-65;
         }
 
+        int[] numsize = matrix.multiplyMatrices(arr, key);
+        int num =Math.floorMod(numsize[0],26);
+        int[][] m = splitStringDecr(data.substring(0,data.length()-n),n);
+        if (num==0){
+
+            if (matrix.calculateDeterminant(keyMatrix)>0 && matrix.checkKey(matrix.calculateDeterminant(keyMatrix),26)){
+                for (int i=0; i<m.length; i++){
+                    int[] input = m[i];
+                    int[] out = matrix.multiplyMatrices(input,key);
+                    for (int j=0; j<out.length;j++){
+                        char text = (char) (Math.floorMod(out[j], 26) + 65);
+                        decryptedText.append(text);
+                    }
+
+                }
+            }
+        }else {
+//            m =splitString(data.substring(0,data.length()-num),n);
+            if (matrix.calculateDeterminant(keyMatrix)>0 && matrix.checkKey(matrix.calculateDeterminant(keyMatrix),26)){
+                for (int i=0; i<m.length; i++){
+                    int[] input = m[i];
+                    int[] out = matrix.multiplyMatrices(input,key);
+                    for (int j=0; j<out.length;j++){
+                        char text = (char) (Math.floorMod(out[j], 26) + 65);
+                        decryptedText.append(text);
+                    }
+
+                }
+            }
+        }
         return decryptedText.toString();
     }
 
-    public static int calculateDeterminant(int[][] matrix, int n) {
-        if (n == 2) {
-            return (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]);
-        } else {
-            int determinant = 0;
-            for (int i = 0; i < n; i++) {
-                determinant += matrix[0][i] * calculateDeterminant(getSubmatrix(matrix, n, i), n - 1) * ((i % 2 == 0) ? 1 : -1);
-            }
-            return determinant;
+
+
+    public  int[][] splitString(String data, int numberOfParts) {
+
+        String input = data.replaceAll(" ", "").toUpperCase();
+
+
+        int length = input.length();
+        int partLength = length / numberOfParts;
+        int padding = length % numberOfParts;
+        int num=0;
+        String[] result;
+        if (padding==0){
+            result = new String[partLength];
+        }else {
+            result = new String[partLength+1];
+            num = numberOfParts-padding;
         }
+        int[][] matr = new  int[result.length+1][numberOfParts];
+        int start =0;
+        int end=numberOfParts;
+        for (int j =0; j<result.length; j++){
+            String h = end > input.length() ? input.substring(start) + "a".repeat(end-start) : input.substring(start,end);
+            result[j] = h;
+            for (int i =0; i< matr[0].length;i++){
+                matr[j][i] = Math.floorMod(h.charAt(i)-65,26) ;
+            }
+            start +=numberOfParts;
+            end+=numberOfParts;
+        }
+
+        matr[matr.length-1][0] = num;
+        return matr;
     }
 
+    public  int[][] splitStringDecr(String data, int numberOfParts) {
 
-    public static int[][] getSubmatrix(int[][] matrix, int n, int col) {
-        int[][] submatrix = new int[n - 1][n - 1];
-        int subrow = 0;
-        for (int row = 1; row < n; row++) {
-            int subcol = 0;
-            for (int j = 0; j < n; j++) {
-                if (j != col) {
-                    submatrix[subrow][subcol] = matrix[row][j];
-                    subcol++;
+        String input = data.replaceAll(" ", "").toUpperCase();
+
+        int[][] matr = new  int[numberOfParts][numberOfParts];
+        int start =0;
+        int end=numberOfParts;
+        for (int j =0; j<numberOfParts; j++){
+            String h =data.substring(start,end);
+
+            for (int i =0; i< numberOfParts;i++){
+                matr[j][i] = Math.floorMod(h.charAt(i)-65,26) ;
+            }
+            start +=numberOfParts;
+            end+=numberOfParts;
+        }
+        return matr;
+    }
+
+    public String toStringKeyArray(int[][] arrKey){
+        String result="";
+        for (int i=0; i<arrKey.length;i++){
+            for (int j=0; j<arrKey[0].length;j++){
+                result += arrKey[i][j] + "\t";
+            }
+            result+="\n";
+        }
+        return result;
+    }
+
+    public int[][] readMatrix(String path){
+        File file = new File(path);
+        ArrayList<int[]> list = new ArrayList<>();
+        int[][] result;
+        if (file.isFile() && file.exists()){
+            try {
+                BufferedReader fis = new BufferedReader(new FileReader(file));
+                String byteRead;
+                while ((byteRead = fis.readLine())!=null){
+                    String re = byteRead;
+                    String[] st = re.split(",");
+                    int[] t = new int[st.length];
+                    for (int i=0; i<t.length; i++){
+                        t[i] = Integer.parseInt(st[i]);
+                    }
+                    list.add(t);
                 }
+                result = new int[list.size()][list.get(0).length];
+                for (int i=0; i< result.length;i++){
+                   result[i] = list.get(i);
+                }
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            subrow++;
+            return  result;
         }
-        return submatrix;
-    }
-
-    public static int findMultiplicativeInverse(int a, int modulus) {
-        for (int x = 1; x < modulus; x++) {
-            if ((a * x) % modulus == 1) {
-                return x;
-            }
-        }
-        return -1;
+        return  null;
     }
 }

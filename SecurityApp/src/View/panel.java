@@ -37,7 +37,7 @@ public class panel extends JPanel {
         text.setBorder(new EmptyBorder(20,20,20,20));
         text.setFont(new Font(text.getName(), Font.BOLD, 48));
 
-        JLabel about = new JLabel("<html> Version: 1.0.0 <br> Release date: 8/11/2023");
+        JLabel about = new JLabel("<html> Version: 1.0.0 (Beta) <br> Release date: 8/11/2023");
         about.setFont(new Font(text.getName(), Font.ITALIC, 24));
         about.setHorizontalAlignment(SwingConstants.CENTER);
         about.setVerticalAlignment(SwingConstants.CENTER);

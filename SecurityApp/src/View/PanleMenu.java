@@ -166,8 +166,23 @@ public class PanleMenu extends JPanel {
             }
         });
 
+        model.MenuItem hill = new model.MenuItem(3,"     Hill",null);
+        hill.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                main.remove(main.getForm());
+                main.setForm(new UIHill(main));
+                main.add(main.getForm(), BorderLayout.CENTER);
+                main.repaint();
+                main.revalidate();
+                System.out.println("click Hill");
+            }
+        });
 
-        model.MenuItem kdx = new model.MenuItem(0,"Khoa Doi Xung",null,caesar,affine,vigenere, transposition, des,aes);
+
+
+        model.MenuItem kdx = new model.MenuItem(0,"Khoa Doi Xung",null,caesar,affine,vigenere, transposition, des,aes,hill);
         kdx.getLbName().setFont(new Font(kdx.getLbName().getFont().getName(), Font.BOLD, 16));
 
         model.MenuItem kbdx = new model.MenuItem(0,"Khoa Bat Doi Xung",null,rsa);
