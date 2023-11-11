@@ -130,7 +130,7 @@ public class PanleMenu extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 main.remove(main.getForm());
-                main.setForm(new UIRSA());
+                main.setForm(new UITransposition());
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();

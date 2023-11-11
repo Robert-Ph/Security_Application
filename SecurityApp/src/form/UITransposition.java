@@ -43,7 +43,7 @@ public class UITransposition extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel panelText = new JPanel();
-        JTextArea textArea = new JTextArea(14,60);
+        TextArea textArea = new TextArea(13,92);
         panelText.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -72,13 +72,9 @@ public class UITransposition extends JPanel {
         ButtonDesign buttonPaste = new ButtonDesign();
         buttonPaste.setText("Paste");
 
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("click paste");
-            }
-        });
-
+        //nut Clear
+        ButtonDesign buttonClear = new ButtonDesign();
+        buttonClear.setText("Clear");
 
         panelButtonEncry.add(labelPathFile);
         panelButtonEncry.add(textFieldFile);
@@ -86,6 +82,7 @@ public class UITransposition extends JPanel {
         panelButtonEncry.add(buttonSave);
         panelButtonEncry.add(buttonCopy);
         panelButtonEncry.add(buttonPaste);
+        panelButtonEncry.add(buttonClear);
 
         /*
         ##########################################################
@@ -177,7 +174,8 @@ public class UITransposition extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel paneltext_Encry = new JPanel();
-        JTextArea textArea_Encry = new JTextArea(14,60);
+        TextArea textArea_Encry = new TextArea(13,92);
+        textArea_Encry.setEditable(false);
         paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -286,6 +284,12 @@ public class UITransposition extends JPanel {
                 }
             }
         });
+        buttonClear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText("");
+            }
+        });
         buttonCopy_Encr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -307,7 +311,7 @@ public class UITransposition extends JPanel {
                 if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
                     try {
                         String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
+                        textArea.append(text);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (UnsupportedFlavorException ex) {
@@ -318,24 +322,6 @@ public class UITransposition extends JPanel {
             }
         });
 
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable  transferable = clipboard.getContents(null);
 
-                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
-                    try {
-                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    } catch (UnsupportedFlavorException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-
-            }
-        });
     }
 }

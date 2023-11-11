@@ -163,6 +163,7 @@ public class UICaesar extends JPanel {
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel paneltext_Encry = new JPanel();
         TextArea textArea_Encry = new TextArea(13,92);
+        textArea_Encry.setEditable(false);
         paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button

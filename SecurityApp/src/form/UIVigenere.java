@@ -21,7 +21,7 @@ public class UIVigenere extends JPanel {
         init();
     }
 
-    public void init(){
+    public void init() {
         this.setSize(1000, 700);
         this.setLayout(new BorderLayout());
 
@@ -35,7 +35,7 @@ public class UIVigenere extends JPanel {
         nameCipher.setPreferredSize(new Dimension(1000, 30));
 
         JPanel panelBody = new JPanel();
-        panelBody.setLayout(new GridLayout(2,1));
+        panelBody.setLayout(new GridLayout(2, 1));
 
         //panel Encry
         JPanel panelEncry = new JPanel();
@@ -43,7 +43,7 @@ public class UIVigenere extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel panelText = new JPanel();
-        JTextArea textArea = new JTextArea(14,60);
+        TextArea textArea = new TextArea(13, 92);
         panelText.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -53,8 +53,8 @@ public class UIVigenere extends JPanel {
         JLabel labelPathFile = new JLabel("File");
 
         JTextField textFieldFile = new JTextField(17);
-        textFieldFile.setBorder(new EmptyBorder(0,0,0,0));
-        textFieldFile.setPreferredSize(new Dimension(15,26));
+        textFieldFile.setBorder(new EmptyBorder(0, 0, 0, 0));
+        textFieldFile.setPreferredSize(new Dimension(15, 26));
 
         //nut Open File
         ButtonDesign buttonOpenFile = new ButtonDesign();
@@ -71,12 +71,11 @@ public class UIVigenere extends JPanel {
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
         buttonPaste.setText("Paste");
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("click paste");
-            }
-        });
+
+        //nut Clear
+        ButtonDesign buttonClear = new ButtonDesign();
+        buttonClear.setText("Clear");
+
 
         panelButtonEncry.add(labelPathFile);
         panelButtonEncry.add(textFieldFile);
@@ -84,6 +83,7 @@ public class UIVigenere extends JPanel {
         panelButtonEncry.add(buttonSave);
         panelButtonEncry.add(buttonCopy);
         panelButtonEncry.add(buttonPaste);
+        panelButtonEncry.add(buttonClear);
 
         /*
         ##########################################################
@@ -95,7 +95,7 @@ public class UIVigenere extends JPanel {
         //panelKey and plantext -
         JPanel panelKeyandPlaintext = new JPanel();
         panelKeyandPlaintext.setPreferredSize(new Dimension(300, 100));
-        panelKeyandPlaintext.setLayout(new GridLayout(2,1,5,5));
+        panelKeyandPlaintext.setLayout(new GridLayout(2, 1, 5, 5));
 
         //panel giao diện phần tao key
         JPanel panelKey = new JPanel();
@@ -134,7 +134,7 @@ public class UIVigenere extends JPanel {
         listCombobox.setBackground(Color.white);
         JLabel labelplainCipher = new JLabel("P & C: ");
         listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType= new JLabel("Type: ");
+        JLabel labelType = new JLabel("Type: ");
         JCheckBox checkBoxText = new JCheckBox("Text");
         checkBoxText.setSelected(true);
         JCheckBox checkBoxFile = new JCheckBox("File");
@@ -174,7 +174,8 @@ public class UIVigenere extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel paneltext_Encry = new JPanel();
-        JTextArea textArea_Encry = new JTextArea(14,60);
+        TextArea textArea_Encry = new TextArea(13, 92);
+        textArea_Encry.setEditable(false);
         paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -223,13 +224,13 @@ public class UIVigenere extends JPanel {
         buttonEncry.setText("Decrypted");
         buttonEncry.setFont(new Font(buttonEncry.getName(), Font.BOLD, 16));
         buttonEncry.setColor1(Color.decode("#FF0000"));
-        buttonEncry.setPreferredSize(new Dimension(110,40));
+        buttonEncry.setPreferredSize(new Dimension(110, 40));
 
         ButtonDesign buttonDecry = new ButtonDesign();
         buttonDecry.setText("Decrypted");
         buttonDecry.setFont(new Font(buttonDecry.getName(), Font.BOLD, 16));
         buttonDecry.setColor1(Color.decode("#00AF17"));
-        buttonDecry.setPreferredSize(new Dimension(110,40));
+        buttonDecry.setPreferredSize(new Dimension(110, 40));
 
         panelButton.add(buttonDecry);
         panelButton.add(buttonEncry);
@@ -246,7 +247,7 @@ public class UIVigenere extends JPanel {
                 fileChooser.setPreferredSize(new Dimension(700, 400));
                 int returnFile = fileChooser.showOpenDialog(null);
 
-                if(returnFile == JFileChooser.APPROVE_OPTION){
+                if (returnFile == JFileChooser.APPROVE_OPTION) {
                     File select = fileChooser.getSelectedFile();
                     textFieldFile.setText(select.getAbsolutePath());
                 }
@@ -260,7 +261,7 @@ public class UIVigenere extends JPanel {
                 fileChooser.setPreferredSize(new Dimension(700, 400));
                 int result = fileChooser.showOpenDialog(null);
 
-                if (result == JFileChooser.APPROVE_OPTION){
+                if (result == JFileChooser.APPROVE_OPTION) {
                     File select = fileChooser.getSelectedFile();
                     String filePath = select.getAbsolutePath();
                     String data = textArea.getText();
@@ -276,18 +277,24 @@ public class UIVigenere extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = textArea.getText();
-                if(text != null){
+                if (text != null) {
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     StringSelection data = new StringSelection(text);
                     clipboard.setContents(data, null);
                 }
             }
         });
+        buttonClear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText("");
+            }
+        });
         buttonCopy_Encr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = textArea_Encry.getText();
-                if(text != null){
+                if (text != null) {
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     StringSelection data = new StringSelection(text);
                     clipboard.setContents(data, null);
@@ -301,10 +308,10 @@ public class UIVigenere extends JPanel {
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 Transferable transferable = clipboard.getContents(null);
 
-                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
+                if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                     try {
                         String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
+                        textArea.append(text);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (UnsupportedFlavorException ex) {
@@ -315,24 +322,5 @@ public class UIVigenere extends JPanel {
             }
         });
 
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable  transferable = clipboard.getContents(null);
-
-                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
-                    try {
-                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    } catch (UnsupportedFlavorException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-
-            }
-        });
     }
 }

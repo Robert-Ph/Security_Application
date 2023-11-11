@@ -17,6 +17,7 @@ import java.io.IOException;
 public class UIRSA extends JPanel {
 
     private String listPlaintext[] = {"English alphabet", "Vietnamese alphabet"};
+    private String listSize[] = {"2048", "3072", "4096"};
     public UIRSA(){
         init();
     }
@@ -43,7 +44,7 @@ public class UIRSA extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel panelText = new JPanel();
-        JTextArea textArea = new JTextArea(14,60);
+        TextArea textArea = new TextArea(13,92);
         panelText.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -69,15 +70,12 @@ public class UIRSA extends JPanel {
         buttonCopy.setText("Copy");
 
         //nut Paste
-
         ButtonDesign buttonPaste = new ButtonDesign();
         buttonPaste.setText("Paste");
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("click paste");
-            }
-        });
+
+        //nut Clear
+        ButtonDesign buttonClear = new ButtonDesign();
+        buttonClear.setText("Clear");
 
 
         panelButtonEncry.add(labelPathFile);
@@ -86,6 +84,7 @@ public class UIRSA extends JPanel {
         panelButtonEncry.add(buttonSave);
         panelButtonEncry.add(buttonCopy);
         panelButtonEncry.add(buttonPaste);
+        panelButtonEncry.add(buttonClear);
 
         /*
         ##########################################################
@@ -97,14 +96,26 @@ public class UIRSA extends JPanel {
         //panelKey and plantext -
         JPanel panelKeyandPlaintext = new JPanel();
         panelKeyandPlaintext.setPreferredSize(new Dimension(300, 100));
-        panelKeyandPlaintext.setLayout(new GridLayout(2,1,5,5));
+        panelKeyandPlaintext.setLayout(new GridLayout(1,1,5,5));
 
         //panel giao diện phần tao key
         JPanel panelKey = new JPanel();
         panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
         panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JLabel lableKey = new JLabel("Input Key: ");
-        JTextArea textKey = new JTextArea(4,25);
+        JLabel lableKey = new JLabel("Public Key: ");
+        TextArea textPublicKey = new TextArea(4,36);
+        textPublicKey.setEditable(false);
+        JLabel lablePrivateKey = new JLabel("Private Key: ");
+        TextArea textPrivateKey = new TextArea(3,36);
+        textPrivateKey.setEditable(false);
+
+        //kich thước key
+        JLabel size = new JLabel("       Size: ");
+        JComboBox list = new JComboBox(listSize);
+        list.setBackground(Color.white);
+        list.setPreferredSize(new Dimension(90,20));
+
+
 
         //nut Create Key
         ButtonDesign buttonCreateKey = new ButtonDesign();
@@ -112,7 +123,7 @@ public class UIRSA extends JPanel {
 
         //save key
         ButtonDesign buttonSaveKey = new ButtonDesign();
-        buttonSaveKey.setText("Copy");
+        buttonSaveKey.setText("Save");
 
         //paste key
         ButtonDesign buttonPasteKey = new ButtonDesign();
@@ -123,11 +134,61 @@ public class UIRSA extends JPanel {
         buttonOpenKey.setText("Open");
 
         panelKey.add(lableKey);
-        panelKey.add(textKey);
+        panelKey.add(textPublicKey);
+        panelKey.add(lablePrivateKey);
+        panelKey.add(textPrivateKey);
+        panelKey.add(size);
+        panelKey.add(list);
+
         panelKey.add(buttonCreateKey);
         panelKey.add(buttonSaveKey);
         panelKey.add(buttonPasteKey);
         panelKey.add(buttonOpenKey);
+
+        panelKeyandPlaintext.add(panelKey);
+
+        //add panel
+        panelEncry.add(panelText, BorderLayout.CENTER);
+        panelEncry.add(panelKeyandPlaintext, BorderLayout.EAST);
+
+        //panel decry
+        JPanel panelDecry = new JPanel();
+        panelDecry.setLayout(new BorderLayout());
+
+        //textFile input data - phan nhap dư lieu ma hoa
+        JPanel paneltext_Encry = new JPanel();
+        TextArea textArea_Encry = new TextArea(13,92);
+        textArea_Encry.setEditable(false);
+        paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+
+        //panel button
+        JPanel panelButtonDecry = new JPanel();
+        panelButtonDecry.setPreferredSize(new Dimension(670, 30));
+        panelButtonDecry.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        //nut Save
+        ButtonDesign buttonSave_Encr = new ButtonDesign();
+        buttonSave_Encr.setText("Save");
+
+        //nut Copy
+        ButtonDesign buttonCopy_Encr = new ButtonDesign();
+        buttonCopy_Encr.setText("Copy");
+
+        //nut Upgrade
+        ButtonDesign buttonUpgrade_Encr = new ButtonDesign();
+        buttonUpgrade_Encr.setText("Upgrade");
+
+        panelButtonDecry.add(buttonSave_Encr);
+        panelButtonDecry.add(buttonCopy_Encr);
+        panelButtonDecry.add(buttonUpgrade_Encr);
+
+        paneltext_Encry.add(textArea_Encry, BorderLayout.CENTER);
+        paneltext_Encry.add(panelButtonDecry, BorderLayout.EAST);
+
+        //panel right
+        JPanel panelRight = new JPanel();
+        panelRight.setPreferredSize(new Dimension(300, 100));
+        panelRight.setLayout(new GridLayout(2,1,5,5));
 
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
@@ -165,49 +226,8 @@ public class UIRSA extends JPanel {
         panelPlaintext.add(checkBoxText);
         panelPlaintext.add(checkBoxFile);
 
-        panelKeyandPlaintext.add(panelKey);
-        panelKeyandPlaintext.add(panelPlaintext);
+        panelRight.add(panelPlaintext);
 
-        //add panel
-        panelEncry.add(panelText, BorderLayout.CENTER);
-        panelEncry.add(panelKeyandPlaintext, BorderLayout.EAST);
-
-        //panel decry
-        JPanel panelDecry = new JPanel();
-        panelDecry.setLayout(new BorderLayout());
-
-        //textFile input data - phan nhap dư lieu ma hoa
-        JPanel paneltext_Encry = new JPanel();
-        JTextArea textArea_Encry = new JTextArea(14,60);
-        paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-
-        //panel button
-        JPanel panelButtonDecry = new JPanel();
-        panelButtonDecry.setPreferredSize(new Dimension(670, 30));
-        panelButtonDecry.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-        //nut Save
-        ButtonDesign buttonSave_Encr = new ButtonDesign();
-        buttonSave_Encr.setText("Save");
-
-        //nut Copy
-        ButtonDesign buttonCopy_Encr = new ButtonDesign();
-        buttonCopy_Encr.setText("Copy");
-
-        //nut Upgrade
-        ButtonDesign buttonUpgrade_Encr = new ButtonDesign();
-        buttonUpgrade_Encr.setText("Upgrade");
-
-        panelButtonDecry.add(buttonSave_Encr);
-        panelButtonDecry.add(buttonCopy_Encr);
-        panelButtonDecry.add(buttonUpgrade_Encr);
-
-        paneltext_Encry.add(textArea_Encry, BorderLayout.CENTER);
-        paneltext_Encry.add(panelButtonDecry, BorderLayout.EAST);
-
-        //panel right
-        JPanel panelRight = new JPanel();
-        panelRight.setPreferredSize(new Dimension(300, 100));
 
         panelDecry.add(paneltext_Encry, BorderLayout.CENTER);
         panelDecry.add(panelRight, BorderLayout.EAST);
@@ -308,7 +328,7 @@ public class UIRSA extends JPanel {
                 if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
                     try {
                         String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
+                        textArea.append(text);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (UnsupportedFlavorException ex) {
@@ -319,24 +339,12 @@ public class UIRSA extends JPanel {
             }
         });
 
-        buttonPaste.addActionListener(new ActionListener() {
+        buttonClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable  transferable = clipboard.getContents(null);
-
-                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
-                    try {
-                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    } catch (UnsupportedFlavorException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-
+                textArea.setText("");
             }
         });
+
     }
 }
