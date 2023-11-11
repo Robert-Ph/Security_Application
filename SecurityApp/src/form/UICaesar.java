@@ -2,6 +2,7 @@ package form;
 
 import View.Main;
 import alorithms.CaesarCipher;
+import alorithms.ReadFile;
 import model.ButtonDesign;
 import model.SaveData;
 
@@ -13,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class UICaesar extends JPanel {
     private Main main;
@@ -44,7 +46,7 @@ public class UICaesar extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel panelText = new JPanel();
-        JTextArea textArea = new JTextArea(14,60);
+        TextArea textArea = new TextArea(13,92);
         panelText.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -72,12 +74,10 @@ public class UICaesar extends JPanel {
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
         buttonPaste.setText("Paste");
-        buttonPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("click paste");
-            }
-        });
+
+        //button clear
+        ButtonDesign buttonClear = new ButtonDesign();
+        buttonClear.setText("Clear");
 
         panelButtonEncry.add(labelPathFile);
         panelButtonEncry.add(textFieldFile);
@@ -85,6 +85,7 @@ public class UICaesar extends JPanel {
         panelButtonEncry.add(buttonSave);
         panelButtonEncry.add(buttonCopy);
         panelButtonEncry.add(buttonPaste);
+        panelButtonEncry.add(buttonClear);
 
         /*
         ##########################################################
@@ -161,7 +162,7 @@ public class UICaesar extends JPanel {
 
         //textFile input data - phan nhap dư lieu ma hoa
         JPanel paneltext_Encry = new JPanel();
-        JTextArea textArea_Encry = new JTextArea(14,60);
+        TextArea textArea_Encry = new TextArea(13,92);
         paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
@@ -262,6 +263,12 @@ public class UICaesar extends JPanel {
             }
         });
 
+        buttonClear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText("");
+            }
+        });
         buttonCopy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -294,7 +301,7 @@ public class UICaesar extends JPanel {
                 if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
                     try {
                         String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
+                        textArea.append(text);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (UnsupportedFlavorException ex) {
@@ -305,21 +312,16 @@ public class UICaesar extends JPanel {
             }
         });
 
-        buttonPaste.addActionListener(new ActionListener() {
+
+        buttonCreateKey.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable  transferable = clipboard.getContents(null);
-
-                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
-                    try {
-                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        textArea.replaceSelection(text);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    } catch (UnsupportedFlavorException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                if (listCombobox.getSelectedItem().equals("English alphabet")){
+                    int randomNum = ThreadLocalRandom.current().nextInt(1, 27);
+                    textKey.setText(String.valueOf(randomNum));
+                } else if (listCombobox.getSelectedItem().equals("Vietnamese alphabet")) {
+                    int randomNum = ThreadLocalRandom.current().nextInt(1, 95);
+                    textKey.setText(String.valueOf(randomNum));
                 }
 
             }
@@ -331,19 +333,38 @@ public class UICaesar extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String input = textArea.getText();
-
-                if (textKey.getText().isEmpty() && input.isEmpty()){
-                    JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
-                } else if (input.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
-                } else if (textKey.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
-                } else {
-                    int key = Integer.parseInt(textKey.getText());
-                    CaesarCipher cipher = new CaesarCipher();
-                    String output = cipher.encryption(input,key);
-                    textArea_Encry.setText(output);
+                if (checkBoxText.isSelected()){
+                    if (textKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        int key = Integer.parseInt(textKey.getText());
+                        CaesarCipher cipher = new CaesarCipher();
+                        String output = cipher.encryption(input,key);
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() && (!textFieldFile.getText().isEmpty())){
+                    File file = new File(textFieldFile.getText());
+                    if (file.exists()){
+                        int key = Integer.parseInt(textKey.getText());
+                        CaesarCipher cipher = new CaesarCipher();
+                        String output = null;
+                        String text="";
+                        try {
+                            cipher.encryFile(input,"kk",key);
+                            ReadFile readFile = new ReadFile();
+                            text = readFile.readFiletoString("kk");
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(text);
+                    }
                 }
+
+
 
             }
         });
@@ -353,18 +374,39 @@ public class UICaesar extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String input = textArea.getText();
 
-                if (textKey.getText().isEmpty() && input.isEmpty()){
-                    JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
-                } else if (input.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
-                } else if (textKey.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
-                } else {
-                    int key = Integer.parseInt(textKey.getText());
-                    CaesarCipher cipher = new CaesarCipher();
-                    String output = cipher.decryption(input,key);
-                    textArea_Encry.setText(output);
+                if (checkBoxText.isSelected()){
+                    if (textKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        int key = Integer.parseInt(textKey.getText());
+                        CaesarCipher cipher = new CaesarCipher();
+                        String output = cipher.decryption(input,key);
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() && (!textFieldFile.getText().isEmpty())){
+                    File file = new File(textFieldFile.getText());
+                    if (file.exists()){
+                        int key = Integer.parseInt(textKey.getText());
+                        CaesarCipher cipher = new CaesarCipher();
+                        String output = null;
+                        String text="";
+                        try {
+                            cipher.decryFile(input,"kk",key);
+                            ReadFile readFile = new ReadFile();
+                            text = readFile.readFiletoString("kk");
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(text);
+                    }
                 }
+
+
+
             }
         });
     }
