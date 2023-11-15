@@ -144,7 +144,7 @@ public class PanleMenu extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 main.remove(main.getForm());
-                main.setForm(new UIDES());
+                main.setForm(new UIDES(main));
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
@@ -158,7 +158,7 @@ public class PanleMenu extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 main.remove(main.getForm());
-                main.setForm(new UIAES());
+                main.setForm(new UIAES(main));
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
@@ -182,13 +182,13 @@ public class PanleMenu extends JPanel {
 
 
 
-        model.MenuItem kdx = new model.MenuItem(0,"Khoa Doi Xung",null,caesar,affine,vigenere, transposition, des,aes,hill);
+        model.MenuItem kdx = new model.MenuItem(0,"Khóa đối xứng",null,caesar,affine,vigenere, transposition, des,aes,hill);
         kdx.getLbName().setFont(new Font(kdx.getLbName().getFont().getName(), Font.BOLD, 16));
 
-        model.MenuItem kbdx = new model.MenuItem(0,"Khoa Bat Doi Xung",null,rsa);
+        model.MenuItem kbdx = new model.MenuItem(0,"Khóa bất đối xứng",null,rsa);
         kbdx.getLbName().setFont(new Font(kdx.getLbName().getFont().getName(), Font.BOLD, 16));
 
-        model.MenuItem hash = new model.MenuItem(11,"Hash",null);
+        model.MenuItem hash = new model.MenuItem(11,"Hàm băm",null);
         hash.getLbName().setFont(new Font(kdx.getLbName().getFont().getName(), Font.BOLD, 16));
         list.add(hash);
         hash.addMouseListener(new MouseAdapter() {
@@ -200,11 +200,25 @@ public class PanleMenu extends JPanel {
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click Hash");
+
             }
         });
 
-        addMenu(kdx,kbdx,hash);
+        model.MenuItem electronicSign = new MenuItem(0, "Chữ ký điện tử",null);
+        electronicSign.getLbName().setFont(new Font(electronicSign.getLbName().getFont().getName(), Font.BOLD, 16));
+        electronicSign.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                main.remove(main.getForm());
+                main.setForm(new UIElectronicSignature());
+                main.add(main.getForm(), BorderLayout.CENTER);
+                main.repaint();
+                main.revalidate();
+            }
+        });
+
+        addMenu(kdx,kbdx,hash, electronicSign);
 
         this.add(panelTilie);
         this.add(panel);

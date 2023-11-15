@@ -1,8 +1,11 @@
 package form;
 
 
+import View.Main;
 import alorithms.AESCipher;
+import alorithms.CaesarCipher;
 import model.ButtonDesign;
+import model.ReadFile;
 import model.SaveData;
 
 import javax.crypto.SecretKey;
@@ -10,21 +13,33 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class UIAES extends JPanel {
     private SecretKey secretKey;
-
-    private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
-    public UIAES(){
+    private Main main;
+    private final Integer[] listPlaintext = {128, 192, 256};
+    public UIAES(Main main){
+        this.main =main;
         init();
     }
+
+
 
     public void init(){
         this.setSize(1000, 700);
@@ -103,9 +118,10 @@ public class UIAES extends JPanel {
         //panel giao diện phần tao key
         JPanel panelKey = new JPanel();
         panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JLabel lableKey = new JLabel("Input Key: ");
-        JTextArea textKey = new JTextArea(4,25);
+        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Khóa", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        JLabel lableKey = new JLabel("Nhập khóa k: ");
+        TextArea textKey = new TextArea(3,35);
+        textKey.setEditable(false);
 
         //nut Create Key
         ButtonDesign buttonCreateKey = new ButtonDesign();
@@ -133,13 +149,13 @@ public class UIAES extends JPanel {
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "PlainText & CipherText", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JComboBox listCombobox = new JComboBox(listPlaintext);
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Cài đặt", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        JComboBox<Integer> listCombobox = new JComboBox<>(listPlaintext);
         listCombobox.setBackground(Color.white);
-        JLabel labelplainCipher = new JLabel("P & C: ");
-        listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType= new JLabel("Type: ");
-        JCheckBox checkBoxText = new JCheckBox("Text");
+        JLabel labelplainCipher = new JLabel("Kích thước Khóa:  ");
+        listCombobox.setPreferredSize(new Dimension(150, 20));
+        JLabel labelType= new JLabel("Kiểu:   ");
+        JCheckBox checkBoxText = new JCheckBox("Văn bản");
         checkBoxText.setSelected(true);
         JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
@@ -242,7 +258,11 @@ public class UIAES extends JPanel {
         this.add(panelBody, BorderLayout.CENTER);
         this.add(panelButton, BorderLayout.SOUTH);
 
-        //event button
+        /*
+        event button
+         */
+
+        // sự kiện mở file
         buttonOpenFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -257,6 +277,8 @@ public class UIAES extends JPanel {
             }
         });
 
+
+        // Lưu dữ liệu bản gõ vào file
         buttonSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -276,6 +298,7 @@ public class UIAES extends JPanel {
             }
         });
 
+        // sao chép ban ro
         buttonCopy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -287,6 +310,21 @@ public class UIAES extends JPanel {
                 }
             }
         });
+
+        // Luu khoa k
+        buttonSaveKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = textKey.getText();
+                if(text != null){
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection data = new StringSelection(text);
+                    clipboard.setContents(data, null);
+                }
+            }
+        });
+
+        //sao chép bản mã
         buttonCopy_Encr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -299,8 +337,7 @@ public class UIAES extends JPanel {
             }
         });
 
-
-
+        //dán bản rõ vào vùng dữ liệu
         buttonPaste.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -321,13 +358,36 @@ public class UIAES extends JPanel {
             }
         });
 
+        // dán key vào vùng du lieu
+        buttonPasteKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable  transferable = clipboard.getContents(null);
 
+                if(transferable != null  && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)){
+                    try {
+                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                        textKey.append(text);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (UnsupportedFlavorException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        });
+
+
+        //Tạo khóa k ngẫu nhiên
         buttonCreateKey.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 AESCipher aesCipher = new AESCipher();
                 try {
-                    aesCipher.setLengthKey(128);
+                    aesCipher.setLengthKey((Integer) listCombobox.getSelectedItem());
+//                    aesCipher.setLengthKey(128);
                     secretKey = aesCipher.generateAESKey();
                     String key = aesCipher.toStringKey(secretKey);
                     textKey.setText(key);
@@ -337,16 +397,17 @@ public class UIAES extends JPanel {
             }
         });
 
+
+        // đưa du lieu tu vung ban ma len vung ban ro de giai ma hoac ma hoa tiep tuc
         buttonUpgrade_Encr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-
                 textArea.setText(textArea_Encry.getText());
                 textArea_Encry.setText("");
             }
         });
 
+        //xoa sach vung du lieu ban ro
         buttonClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -355,42 +416,158 @@ public class UIAES extends JPanel {
         });
 
 
+        /*
+        xu ly su kien ma hoa va giai ma
+         */
 
-
-        //event
+        //su kien ma hoa
         buttonEncry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String input = textArea.getText();
+
                 AESCipher cipher = new AESCipher();
-//                cipher.setLengthKey(128);
-                String output = null;
-//                String k ="";
-                try {
-//                    secretKey = cipher.generateAESKey();
-//                    k = cipher.secretKeyToString(secretKey);
-                    output = cipher.encryptAES(input,secretKey);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                cipher.setKey(secretKey);
+
+
+                if (checkBoxText.isSelected()){
+                    String text = textArea.getText();
+                    if (textKey.getText().isEmpty() && text.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (text.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String output = "";
+                        try {
+                            output = cipher.encryptAES(text);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() ){
+                    String input = textFieldFile.getText();
+
+                    if (textKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Error",JOptionPane.CANCEL_OPTION);
+                    }else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có dữ liệu để mã hóa hoặc giải mã","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có khóa","Error",JOptionPane.CANCEL_OPTION);
+                    }else {
+                        File file = new File(input);
+                        String extention = new ReadFile().getFileExtension(file);
+                        LocalDate now = LocalDate.now();
+                        LocalTime currentTime = LocalTime.now();
+
+                        // Định dạng giờ
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+                        // Lấy chuỗi biểu diễn cho giờ hiện tại
+                        String formattedTime = currentTime.format(formatter);
+
+                        // Bỏ dấu ":" từ chuỗi giờ
+                        String timeWithoutColon = formattedTime.replace(":", "_");
+                        String time = String.valueOf(now);
+                        String des =   "AES_Encry_" + time +"_"+timeWithoutColon + "."+extention;
+                        if (file.exists()) {
+
+                            System.out.println(des);
+                            String text = "";
+                            try {
+                                cipher.encryFile(input,main.getPathToSaveFile() +"\\" + des);
+                                ReadFile readFile = new ReadFile();
+                                text = readFile.readFiletoString(des);
+
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            textArea_Encry.setText(text);
+                        }
+                        JOptionPane.showMessageDialog(null,"<html>Mã hóa thành công!<br>Tên file: <html>"+des+"<html><br> Địa chỉ lưu file: <html>"+ main.getPathToSaveFile() ,"Thông báo",JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
-                textArea_Encry.setText(output);
-//                textKey.setText(k);
             }
         });
 
+
+        //su kien gia ma
         buttonDecry.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String input = textArea.getText();
+            public void actionPerformed(ActionEvent e)  {
+
                 AESCipher cipher = new AESCipher();
-                cipher.setLengthKey(128);
-                String output = null;
-                try {
-                    output = cipher.decryptAES(input,secretKey);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                cipher.setKey(secretKey);
+
+
+                if (checkBoxText.isSelected()){
+                    String text = textArea.getText();
+                    if (textKey.getText().isEmpty() && text.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (text.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String output = null;
+                        try {
+                            output = cipher.decryptAES(text);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected()){
+                    String input = textFieldFile.getText();
+
+                    if (textKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Error",JOptionPane.CANCEL_OPTION);
+                    }else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có dữ liệu để mã hóa hoặc giải mã","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có khóa","Error",JOptionPane.CANCEL_OPTION);
+                    }else{
+                        File file = new File(input);
+
+                        String extention = new ReadFile().getFileExtension(file);
+                        LocalDate now = LocalDate.now();
+                        LocalTime currentTime = LocalTime.now();
+
+                        // Định dạng giờ
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+                        // Lấy chuỗi biểu diễn cho giờ hiện tại
+                        String formattedTime = currentTime.format(formatter);
+
+                        // Bỏ dấu ":" từ chuỗi giờ
+                        String timeWithoutColon = formattedTime.replace(":", "_");
+                        String time = String.valueOf(now);
+                        String des =   "AES_Decry_" + time +"_"+timeWithoutColon +"."+ extention;
+                        if (file.exists()){
+
+                            String text="";
+                            try {
+                                cipher.decryFile(input,main.getPathToSaveFile()+"\\"+des);
+                                ReadFile readFile = new ReadFile();
+                                text = readFile.readFiletoString(des);
+
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(null, "Không thể giải mã","Error",JOptionPane.CANCEL_OPTION);
+                                Path path = Paths.get(des);
+                                try {
+                                    Files.delete(path);
+                                } catch (IOException exc) {
+                                    throw new RuntimeException(exc);
+                                }
+                            }
+                            textArea_Encry.setText(text);
+
+                            JOptionPane.showMessageDialog(null,"<html>Giải mã thành công!<br>Tên file: <html>"+des+"<html><br> Địa chỉ lưu file: <html>"+ main.getPathToSaveFile() ,"Thông báo",JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+
                 }
-                textArea_Encry.setText(output);
             }
         });
     }

@@ -13,6 +13,7 @@ public class DESCipher {
     private SecretKey key;
 
 
+
     public  SecretKey generateDESKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
         SecureRandom secureRandom = new SecureRandom();
@@ -21,16 +22,16 @@ public class DESCipher {
         return key;
     }
 
-    public  String encryptDES(String data, SecretKey secretKey) throws Exception {
+    public  String encryptDES(String data) throws Exception {
         Cipher cipher = Cipher.getInstance("DES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        cipher.init(Cipher.ENCRYPT_MODE, key);
         byte[] encryptedBytes = cipher.doFinal(data.getBytes("UTF-8"));
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    public  String decryptDES(String encryptedData, SecretKey secretKey) throws Exception {
+    public  String decryptDES(String encryptedData) throws Exception {
         Cipher cipher = Cipher.getInstance("DES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] encryptedBytes = Base64.getDecoder().decode(encryptedData);
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
         return new String(decryptedBytes, "UTF-8");
@@ -93,7 +94,9 @@ public class DESCipher {
     }
 
 
-
+    public String toStringKey(SecretKey key){
+        return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
 
     public SecretKey getKey() {
         return key;
@@ -113,19 +116,19 @@ public class DESCipher {
         String base64Key = Base64.getEncoder().encodeToString(secretKey.getEncoded());
         System.out.println("Khóa DES: " + base64Key);
         // Mã hóa dữ liệu
-        String encryptedData = des.encryptDES(originalData, secretKey);
+        String encryptedData = des.encryptDES(originalData);
         System.out.println("Encrypted Data: " + encryptedData);
 
         // Giải mã dữ liệu
-        String decryptedData = des.decryptDES(encryptedData, secretKey);
+        String decryptedData = des.decryptDES(encryptedData);
         System.out.println("Decrypted Data: " + decryptedData);
-
-        try {
-            des.encryFile("src\\example.txt","src\\e.txt");
-            des.decryFile("src\\e.txt","src\\e1.txt");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//
+//        try {
+//            des.encryFile("src\\example.txt","src\\e.txt");
+//            des.decryFile("src\\e.txt","src\\e1.txt");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
 }

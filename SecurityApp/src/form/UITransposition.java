@@ -151,6 +151,10 @@ public class UITransposition extends JPanel {
             }
         };
 
+        JLabel textAttention = new JLabel("<html> Lưu ý: Mã hóa file chỉ sử dụng đối với<br> file có dữ liệu văn bản");
+        textAttention.setForeground(Color.red);
+
+
 
         checkBoxText.addActionListener(actionListener);
         checkBoxFile.addActionListener(actionListener);
@@ -160,6 +164,7 @@ public class UITransposition extends JPanel {
         panelPlaintext.add(labelType);
         panelPlaintext.add(checkBoxText);
         panelPlaintext.add(checkBoxFile);
+        panelPlaintext.add(textAttention);
 
         panelKeyandPlaintext.add(panelKey);
         panelKeyandPlaintext.add(panelPlaintext);

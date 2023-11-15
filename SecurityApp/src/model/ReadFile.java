@@ -56,7 +56,14 @@ public class ReadFile {
     }
 
 
-
+    public   String getFileExtension(File file) {
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
+            return fileName.substring(dotIndex + 1);
+        }
+        return "";
+    }
 
     public String readFiletoString(String pathFile) throws Exception{
         File file = new File(pathFile);

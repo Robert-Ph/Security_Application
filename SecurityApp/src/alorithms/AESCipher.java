@@ -21,16 +21,16 @@ public class AESCipher {
         return key;
     }
 
-    public  String encryptAES(String data, SecretKey secretKey) throws Exception {
+    public  String encryptAES(String data) throws Exception {
         Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        cipher.init(Cipher.ENCRYPT_MODE,key);
         byte[] encryptedBytes = cipher.doFinal(data.getBytes("UTF-8"));
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    public String decryptAES(String encryptedData, SecretKey secretKey) throws Exception {
+    public String decryptAES(String encryptedData) throws Exception {
         Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] encryptedBytes = Base64.getDecoder().decode(encryptedData);
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
         return new String(decryptedBytes, "UTF-8");
@@ -120,19 +120,19 @@ public class AESCipher {
         SecretKey secretKey = aesCipher.generateAESKey();
 
         // Mã hóa dữ liệu
-        String encryptedData = aesCipher.encryptAES(originalData, secretKey);
+        String encryptedData = aesCipher.encryptAES(originalData);
         System.out.println("Encrypted Data: " + encryptedData);
 
         // Giải mã dữ liệu
-        String decryptedData = aesCipher.decryptAES(encryptedData, secretKey);
+        String decryptedData = aesCipher.decryptAES(encryptedData);
         System.out.println("Decrypted Data: " + decryptedData);
 
-//        try {
-//            aesCipher.encryFile("src\\example.txt","src\\e.txt");
-//            aesCipher.decryFile("src\\e.txt","src\\e1.txt");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            aesCipher.encryFile("C:\\Users\\Thinh\\Desktop\\t.txt","src\\e.txt");
+            aesCipher.decryFile("src\\e.txt","src\\e1.txt");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

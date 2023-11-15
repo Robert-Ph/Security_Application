@@ -1,8 +1,13 @@
 package form;
 
+import View.Main;
+import alorithms.AESCipher;
+import alorithms.DESCipher;
 import model.ButtonDesign;
+import model.ReadFile;
 import model.SaveData;
 
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -13,10 +18,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 
 public class UIDES extends JPanel{
+    private SecretKey secretKey;
+    private Main main;
     private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
-    public UIDES(){
+    public UIDES(Main main){
+        this.main = main;
         init();
     }
 
@@ -98,9 +111,10 @@ public class UIDES extends JPanel{
         //panel giao diện phần tao key
         JPanel panelKey = new JPanel();
         panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JLabel lableKey = new JLabel("Input Key: ");
-        JTextArea textKey = new JTextArea(4,25);
+        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Khóa", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        JLabel lableKey = new JLabel("Nhập khóa k: 56 bit");
+        TextArea textKey = new TextArea(3,35);
+        textKey.setEditable(false);
 
         //nut Create Key
         ButtonDesign buttonCreateKey = new ButtonDesign();
@@ -128,13 +142,13 @@ public class UIDES extends JPanel{
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "PlainText & CipherText", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JComboBox listCombobox = new JComboBox(listPlaintext);
-        listCombobox.setBackground(Color.white);
-        JLabel labelplainCipher = new JLabel("P & C: ");
-        listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType= new JLabel("Type: ");
-        JCheckBox checkBoxText = new JCheckBox("Text");
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Cài đặt", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+
+
+
+
+        JLabel labelType= new JLabel("Kiểu:   ");
+        JCheckBox checkBoxText = new JCheckBox("Văn bản");
         checkBoxText.setSelected(true);
         JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
@@ -154,8 +168,6 @@ public class UIDES extends JPanel{
         checkBoxText.addActionListener(actionListener);
         checkBoxFile.addActionListener(actionListener);
 
-        panelPlaintext.add(labelplainCipher);
-        panelPlaintext.add(listCombobox);
         panelPlaintext.add(labelType);
         panelPlaintext.add(checkBoxText);
         panelPlaintext.add(checkBoxFile);
@@ -315,11 +327,142 @@ public class UIDES extends JPanel{
 
             }
         });
+        //Tạo khóa k ngẫu nhiên
+        buttonCreateKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DESCipher desCipher = new DESCipher();
+                try {
 
+                    secretKey = desCipher.generateDESKey();
+                    String key = desCipher.toStringKey(secretKey);
+                    textKey.setText(key);
+                } catch (NoSuchAlgorithmException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        // đưa du lieu tu vung ban ma len vung ban ro de giai ma hoac ma hoa tiep tuc
+        buttonUpgrade_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(textArea_Encry.getText());
+                textArea_Encry.setText("");
+            }
+        });
         buttonClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textArea.setText("");
+            }
+        });
+
+        /*
+        xu ly su kien ma hoa va giai ma
+         */
+
+        //su kien ma hoa
+        buttonEncry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String input = textArea.getText();
+                DESCipher cipher = new DESCipher();
+                cipher.setKey(secretKey);
+
+                if (checkBoxText.isSelected()){
+                    if (textKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String output = null;
+                        try {
+                            output = cipher.encryptDES(input);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() && (!input.isEmpty())){
+                    File file = new File(input);
+
+                    if (file.exists()){
+                        LocalDateTime now = LocalDateTime.now();
+                        String time = String.valueOf(now);
+                        String des = main.getPathToSaveFile()+"\\"+"AES_Encry_"+time+".txt";
+                        System.out.println(des);
+                        String text="";
+                        try {
+                            cipher.encryFile(input,des);
+                            ReadFile readFile = new ReadFile();
+                            text = readFile.readFiletoString(des);
+
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(text);
+                    }else{
+                        JOptionPane.showMessageDialog(null, input,"Error",JOptionPane.CANCEL_OPTION);
+                    }
+                }
+            }
+        });
+
+
+        //su kien gia ma
+        buttonDecry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)  {
+                String input = textFieldFile.getText();
+                DESCipher cipher = new DESCipher();
+                cipher.setKey(secretKey);
+
+                if (checkBoxText.isSelected()){
+                    if (textKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String output = null;
+                        try {
+                            output = cipher.decryptDES(input);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() && (!input.isEmpty())){
+                    File file = new File(input);
+
+                    if (file.exists()){
+                        LocalDateTime now = LocalDateTime.now();
+                        String time = String.valueOf(now);
+                        String des = main.getPathToSaveFile()+"\\"+"AES_Decry_"+time+".txt";
+                        System.out.println(des);
+                        String text="";
+                        try {
+                            cipher.decryFile(input,des);
+                            ReadFile readFile = new ReadFile();
+                            text = readFile.readFiletoString(des);
+
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(null, "Không thể giải mã","Error",JOptionPane.CANCEL_OPTION);
+                            Path path = Paths.get(des);
+                            try {
+                                Files.delete(path);
+                            } catch (IOException exc) {
+                                throw new RuntimeException(exc);
+                            }
+                        }
+                        textArea_Encry.setText(text);
+                    }else{
+                        JOptionPane.showMessageDialog(null, input,"Error",JOptionPane.CANCEL_OPTION);
+                    }
+                }
             }
         });
 

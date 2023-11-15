@@ -164,6 +164,8 @@ public class UIHill extends JPanel {
             }
         };
 
+        JLabel textAttention = new JLabel("<html>Lưu ý: Hiện tại thuật toán chỉ sử dụng được đối <br>với văn bản ngôn ngữ tiếng anh!<html>");
+        textAttention.setForeground(Color.red);
 
         checkBoxText.addActionListener(actionListener);
 //        checkBoxFile.addActionListener(actionListener);
@@ -172,7 +174,7 @@ public class UIHill extends JPanel {
         panelPlaintext.add(listCombobox);
         panelPlaintext.add(labelType);
         panelPlaintext.add(checkBoxText);
-//        panelPlaintext.add(checkBoxFile);
+        panelPlaintext.add(textAttention);
 
         panelKeyandPlaintext.add(panelKey);
         panelKeyandPlaintext.add(panelPlaintext);
@@ -408,20 +410,26 @@ public class UIHill extends JPanel {
         buttonEncry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                hillCipher = new HillCipher();
                 int[][] key = arrKey;
-                System.out.println(hillCipher.toStringKeyArray(key));
-                String out = hillCipher.hillCipherEncrypt(textArea.getText(), key);
-                textArea_Encry.setText(out);
+                hillCipher = new HillCipher();
+                String data =textArea.getText();
+                String out = hillCipher.hillCipherEncrypt(data, key);
+                String encry = hillCipher.stringData(data, out,0, true );
+                textArea_Encry.setText(encry);
             }
         });
 
         buttonDecry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                int[][] key = arrKey;
                 hillCipher = new HillCipher();
-                String out = hillCipher.hillCipherDecrypt(textArea.getText(), arrKey);
-                textArea_Encry.setText(out);
+                String data =textArea.getText();
+
+                String out = hillCipher.hillCipherDecrypt(hillCipher.splitDataIsLetter(data).toUpperCase(), key);
+                int num = hillCipher.numsize(data, key);
+                String encry = hillCipher.stringData(data.substring(0,data.length()-arrKey.length), out, num, false );
+                textArea_Encry.setText(encry);
             }
         });
     }
