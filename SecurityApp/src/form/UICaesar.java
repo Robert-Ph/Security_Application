@@ -2,7 +2,7 @@ package form;
 
 import View.Main;
 import alorithms.CaesarCipher;
-import alorithms.ReadFile;
+import model.ReadFile;
 import model.ButtonDesign;
 import model.SaveData;
 

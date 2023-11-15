@@ -1,4 +1,4 @@
-package alorithms;
+package model;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -92,9 +92,18 @@ public class ReadFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public void writeFile(String data, String pathFile){
+        try {
+            BufferedWriter file = new BufferedWriter(new FileWriter(pathFile));
+            file.write(data);
 
-
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     public static void main(String[] args) { ReadFile r = new ReadFile();
         Map<Integer, String> p = new HashMap<>();

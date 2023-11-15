@@ -2,12 +2,11 @@ package form;
 
 import View.Main;
 import alorithms.HillCipher;
-import alorithms.ReadFile;
+import model.ReadFile;
 import model.ButtonDesign;
 import model.SaveData;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -16,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 public class UIHill extends JPanel {
     private HillCipher hillCipher;

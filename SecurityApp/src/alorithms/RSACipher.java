@@ -1,8 +1,10 @@
 package alorithms;
 
-import javax.crypto.Cipher;
 import java.io.*;
 import java.security.*;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.util.Base64;
 
 public class RSACipher {
@@ -16,7 +18,11 @@ public class RSACipher {
         return  keyPairGenerator.generateKeyPair();
 
     }
-
+    private static SecretKey generateAESKey() throws Exception {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(256); // Độ dài khóa AES (128, 192 hoặc 256 bits)
+        return keyGenerator.generateKey();
+    }
     public static String encryptRSA(String data, PublicKey publicKey) throws Exception {
         if (publicKey==null) generateRSAKeyPair();
 
@@ -34,54 +40,52 @@ public class RSACipher {
         return new String(decryptedBytes, "UTF-8");
     }
 
-    public void encryptionFile(String sourceFile, String desFile, PublicKey key) throws Exception{
-        File file = new File(sourceFile);
-        if (file.isFile()){
-
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
-            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(desFile)));
-
-            byte[] input = new byte[256];
-
-            long length = file.length();
-            int byteRead = 0;
-            while ((length > 0)){
-                byteRead = dis.read(input);
-                byte[] encryptedData = cipher.doFinal(input, 0, byteRead);
-                dos.write(encryptedData);
-                length -= byteRead;
-            }
-            dis.close();
-            dos.close();
-            System.out.println("File đã được mã hóa thành công.");
+    private static void saveKeyToFile(String fileName, Key key) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            oos.writeObject(key);
         }
     }
 
-    public void descryptionFile(String sourceFile, String desFile, PrivateKey key) throws Exception{
-        File file = new File(sourceFile);
-        if (file.isFile()){
-
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
-            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(desFile)));
-
-            byte[] input = new byte[256];
-
-            long length = file.length();
-            int byteRead = 0;
-            while ((length > 0)){
-                byteRead = dis.read(input);
-                byte[] encryptedData = cipher.doFinal(input, 0, byteRead);
-                dos.write(encryptedData);
-                length -= byteRead;
+    private static byte[] readFile(String fileName) throws IOException {
+        try (FileInputStream fis = new FileInputStream(fileName);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
             }
-            dis.close();
-            dos.close();
-            System.out.println("File đã được mã hóa thành công.");
+            return baos.toByteArray();
         }
+    }
+
+    private static void saveToFile(String fileName, byte[] data) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(fileName)) {
+            fos.write(data);
+        }
+    }
+
+    private static byte[] encryptAES(byte[] data, SecretKey secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        return cipher.doFinal(data);
+    }
+
+    private static byte[] decryptAES(byte[] encryptedData, SecretKey secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        return cipher.doFinal(encryptedData);
+    }
+
+    private static byte[] encryptRSA(byte[] data, PublicKey publicKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        return cipher.doFinal(data);
+    }
+
+    private static byte[] decryptRSA(byte[] encryptedData, PrivateKey privateKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        return cipher.doFinal(encryptedData);
     }
     public static void main(String[] args) throws Exception {
         // Khởi tạo dữ liệu cần mã hóa
@@ -100,12 +104,11 @@ public class RSACipher {
         String decryptedData = decryptRSA(encryptedData, privateKey);
         System.out.println("Decrypted Data: " + decryptedData);
 
-        try {
-            rsa.encryptionFile("src\\example.txt","src\\e.txt",publicKey);
-            rsa.descryptionFile("src\\e.txt","src\\e1.txt", privateKey);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            rsa.encryptionFile("src\\test.pdf","src\\e.pdf",publicKey);
+//            rsa.descryptionFile("src\\e.pdf","src\\e1.pdf", privateKey);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);        }
     }
 }
 

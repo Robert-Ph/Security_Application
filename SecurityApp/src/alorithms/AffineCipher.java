@@ -1,5 +1,7 @@
 package alorithms;
 
+import model.ReadFile;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
