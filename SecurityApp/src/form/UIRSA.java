@@ -1,8 +1,13 @@
 package form;
 
+import View.Main;
+import alorithms.AESCipher;
+import alorithms.RSACipher;
 import model.ButtonDesign;
+import model.ReadFile;
 import model.SaveData;
 
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -13,12 +18,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class UIRSA extends JPanel {
+    private KeyPair keyPair;
+    private Main main;
 
     private String listPlaintext[] = {"English alphabet", "Vietnamese alphabet"};
-    private String listSize[] = {"2048", "3072", "4096"};
-    public UIRSA(){
+    private Integer[] listSize = {2048,3072, 4096};
+    public UIRSA(Main main){
+        this.main= main;
         init();
     }
 
@@ -102,28 +118,28 @@ public class UIRSA extends JPanel {
         JPanel panelKey = new JPanel();
         panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
         panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JLabel lableKey = new JLabel("Public Key: ");
+        JLabel lableKey = new JLabel("Khóa công khai: ");
         TextArea textPublicKey = new TextArea(4,36);
         textPublicKey.setEditable(false);
-        JLabel lablePrivateKey = new JLabel("Private Key: ");
+        JLabel lablePrivateKey = new JLabel("Khóa bí mật: ");
         TextArea textPrivateKey = new TextArea(3,36);
         textPrivateKey.setEditable(false);
 
         //kich thước key
-        JLabel size = new JLabel("       Size: ");
-        JComboBox list = new JComboBox(listSize);
-        list.setBackground(Color.white);
-        list.setPreferredSize(new Dimension(90,20));
+        JLabel size = new JLabel("       Kích thước: ");
+        JComboBox<Integer> listSizeKey = new JComboBox<>(listSize);
+        listSizeKey.setBackground(Color.white);
+        listSizeKey.setPreferredSize(new Dimension(90,20));
 
 
 
         //nut Create Key
         ButtonDesign buttonCreateKey = new ButtonDesign();
-        buttonCreateKey.setText("Create Key");
+        buttonCreateKey.setText("Tạo khóa");
 
         //save key
         ButtonDesign buttonSaveKey = new ButtonDesign();
-        buttonSaveKey.setText("Save");
+        buttonSaveKey.setText("Lưu");
 
         //paste key
         ButtonDesign buttonPasteKey = new ButtonDesign();
@@ -131,14 +147,14 @@ public class UIRSA extends JPanel {
 
         //open key
         ButtonDesign buttonOpenKey = new ButtonDesign();
-        buttonOpenKey.setText("Open");
+        buttonOpenKey.setText("Chọn");
 
         panelKey.add(lableKey);
         panelKey.add(textPublicKey);
         panelKey.add(lablePrivateKey);
         panelKey.add(textPrivateKey);
         panelKey.add(size);
-        panelKey.add(list);
+        panelKey.add(listSizeKey);
 
         panelKey.add(buttonCreateKey);
         panelKey.add(buttonSaveKey);
@@ -168,11 +184,11 @@ public class UIRSA extends JPanel {
 
         //nut Save
         ButtonDesign buttonSave_Encr = new ButtonDesign();
-        buttonSave_Encr.setText("Save");
+        buttonSave_Encr.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy_Encr = new ButtonDesign();
-        buttonCopy_Encr.setText("Copy");
+        buttonCopy_Encr.setText("Sao chép");
 
         //nut Upgrade
         ButtonDesign buttonUpgrade_Encr = new ButtonDesign();
@@ -193,13 +209,13 @@ public class UIRSA extends JPanel {
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "PlainText & CipherText", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ & Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         JComboBox listCombobox = new JComboBox(listPlaintext);
         listCombobox.setBackground(Color.white);
         JLabel labelplainCipher = new JLabel("P & C: ");
         listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType= new JLabel("Type: ");
-        JCheckBox checkBoxText = new JCheckBox("Text");
+        JLabel labelType= new JLabel("Loại: ");
+        JCheckBox checkBoxText = new JCheckBox("Văn bản");
         checkBoxText.setSelected(true);
         JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
@@ -244,13 +260,13 @@ public class UIRSA extends JPanel {
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         ButtonDesign buttonEncry = new ButtonDesign();
-        buttonEncry.setText("Decrypted");
+        buttonEncry.setText("Mã hóa");
         buttonEncry.setFont(new Font(buttonEncry.getName(), Font.BOLD, 16));
         buttonEncry.setColor1(Color.decode("#FF0000"));
         buttonEncry.setPreferredSize(new Dimension(110,40));
 
         ButtonDesign buttonDecry = new ButtonDesign();
-        buttonDecry.setText("Decrypted");
+        buttonDecry.setText("Giải mã");
         buttonDecry.setFont(new Font(buttonDecry.getName(), Font.BOLD, 16));
         buttonDecry.setColor1(Color.decode("#00AF17"));
         buttonDecry.setPreferredSize(new Dimension(110,40));
@@ -338,6 +354,15 @@ public class UIRSA extends JPanel {
 
             }
         });
+        // đưa du lieu tu vung ban ma len vung ban ro de giai ma hoac ma hoa tiep tuc
+        buttonUpgrade_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(textArea_Encry.getText());
+                textArea_Encry.setText("");
+            }
+        });
+
 
         buttonClear.addActionListener(new ActionListener() {
             @Override
@@ -346,5 +371,103 @@ public class UIRSA extends JPanel {
             }
         });
 
+        buttonCreateKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RSACipher rsaCipher = new RSACipher();
+                try {
+                    rsaCipher.setLength((Integer) listSizeKey.getSelectedItem());
+                    keyPair = rsaCipher.generateRSAKeyPair();
+                    textPublicKey.setText(rsaCipher.keyToString(keyPair.getPublic()));
+                    textPrivateKey.setText(rsaCipher.keyToString(keyPair.getPrivate()));
+                } catch (NoSuchAlgorithmException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        /*
+        mã hóa
+         */
+
+        buttonEncry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               RSACipher rsaCipher = new RSACipher();
+               rsaCipher.setPublicKey(keyPair.getPublic());
+
+
+                if (checkBoxText.isSelected()){
+                    String text = textArea.getText();
+                    if (textPublicKey.getText().isEmpty() && text.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (text.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (textPublicKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Khóa không tồn tại","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String output = "";
+                        try {
+                            output = rsaCipher.encryptRSA(text);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() ){
+                    String input = textFieldFile.getText();
+
+                    if (textPrivateKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                    }else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có dữ liệu để mã hóa hoặc giải mã","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (textPrivateKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có khóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                    }else {
+
+                    }
+                }
+            }
+        });
+
+        buttonDecry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RSACipher rsaCipher = new RSACipher();
+                rsaCipher.setPrivateKey(keyPair.getPrivate());
+
+
+                if (checkBoxText.isSelected()){
+                    String text = textArea.getText();
+                    if (textPublicKey.getText().isEmpty() && text.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (text.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (textPublicKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Khóa không tồn tại","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String output = "";
+                        try {
+                            output = rsaCipher.decryptRSA(text);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() ){
+                    String input = textFieldFile.getText();
+
+                    if (textPrivateKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                    }else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có dữ liệu để mã hóa hoặc giải mã","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (textPrivateKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có khóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                    }else {
+                        JOptionPane.showMessageDialog(null, "Chưa hoàn thiện giải mã file","Thông báo",JOptionPane.OK_OPTION);
+                    }
+                }
+            }
+        });
     }
 }

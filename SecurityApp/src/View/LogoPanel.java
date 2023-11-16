@@ -14,7 +14,8 @@ public class LogoPanel extends JPanel {
 
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File("ImageIcon\\logo.png"));
+
+            image = ImageIO.read(Main.class.getResource("/ImageIcon/logo.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -30,7 +31,7 @@ public class LogoPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 main.remove(main.getForm());
-                main.setForm(new PanelBody());
+                main.setForm(new panel(main));
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();

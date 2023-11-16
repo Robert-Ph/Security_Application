@@ -141,25 +141,7 @@ public class TranspositionCipher {
             return sortedMap;
         }
 
-    public static void main(String[] args) {
 
-        TranspositionCipher t = new TranspositionCipher();
-        String data = "Thịnh thịnh";
-        String key = "hi";
-        String[][] r= t.matrixCalculation(data,key.length());
-        String y = t.encryption(data,key);
-        System.out.println(y);
-        System.out.println(t.decryption(y,key));
-
-
-
-//        try {
-//            t.encryFile("src\\example.txt","src\\e.txt", key);
-//            t.decryFile("src\\e.txt","src\\e1.txt", key);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-    }
 }
 
 

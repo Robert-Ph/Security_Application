@@ -77,7 +77,7 @@ public class PanleMenu extends JPanel {
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click caesar");
+
             }
 
         });
@@ -93,7 +93,7 @@ public class PanleMenu extends JPanel {
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click affine");
+
             }
         });
         model.MenuItem vigenere = new model.MenuItem(2,"     Vigenere",null);
@@ -102,11 +102,11 @@ public class PanleMenu extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 main.remove(main.getForm());
-                main.setForm(new UIVigenere());
+                main.setForm(new UIVigenere(main));
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click vigenere");
+
             }
         });
 
@@ -116,11 +116,11 @@ public class PanleMenu extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 main.remove(main.getForm());
-                main.setForm(new UIRSA());
+                main.setForm(new UIRSA(main));
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click RSA");
+
             }
         });
 
@@ -130,11 +130,11 @@ public class PanleMenu extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 main.remove(main.getForm());
-                main.setForm(new UITransposition());
+                main.setForm(new UITransposition(main));
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click Transposition");
+
             }
         });
 
@@ -148,7 +148,7 @@ public class PanleMenu extends JPanel {
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click DES");
+
             }
         });
 
@@ -162,7 +162,7 @@ public class PanleMenu extends JPanel {
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click SES");
+
             }
         });
 
@@ -176,7 +176,7 @@ public class PanleMenu extends JPanel {
                 main.add(main.getForm(), BorderLayout.CENTER);
                 main.repaint();
                 main.revalidate();
-                System.out.println("click Hill");
+
             }
         });
 

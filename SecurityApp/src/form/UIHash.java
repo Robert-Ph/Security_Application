@@ -59,15 +59,15 @@ public class UIHash extends JPanel {
 
         //nut Open File
         ButtonDesign buttonOpenFile = new ButtonDesign();
-        buttonOpenFile.setText("Open file");
+        buttonOpenFile.setText("Chọn file");
 
         //nut Save
         ButtonDesign buttonSave = new ButtonDesign();
-        buttonSave.setText("Save");
+        buttonSave.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy = new ButtonDesign();
-        buttonCopy.setText("Copy");
+        buttonCopy.setText("Sao chép");
 
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
@@ -75,7 +75,7 @@ public class UIHash extends JPanel {
 
         //nut Clear
         ButtonDesign buttonClear = new ButtonDesign();
-        buttonClear.setText("Clear");
+        buttonClear.setText("Xóa");
 
 
         panelButtonEncry.add(labelPathFile);
@@ -103,13 +103,13 @@ public class UIHash extends JPanel {
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Setting", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Cài đặt", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         JComboBox listCombobox = new JComboBox(listPlaintext);
         listCombobox.setBackground(Color.white);
-        JLabel labelplainCipher = new JLabel("Tool ");
+        JLabel labelplainCipher = new JLabel("Công cụ ");
         listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType= new JLabel("Type: ");
-        JCheckBox checkBoxText = new JCheckBox("Text");
+        JLabel labelType= new JLabel("Kiểu: ");
+        JCheckBox checkBoxText = new JCheckBox("Văn bản");
         checkBoxText.setSelected(true);
         JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
@@ -151,7 +151,7 @@ public class UIHash extends JPanel {
         JPanel paneltext_Encry = new JPanel();
         TextArea textArea_Encry = new TextArea(13,92);
         textArea_Encry.setEditable(false);
-        paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Output", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        paneltext_Encry.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Kết quả", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         //panel button
         JPanel panelButtonDecry = new JPanel();
@@ -162,7 +162,7 @@ public class UIHash extends JPanel {
 
         //nut Copy
         ButtonDesign buttonCopy_Encr = new ButtonDesign();
-        buttonCopy_Encr.setText("Copy");
+        buttonCopy_Encr.setText("Lưu");
 
 
         panelButtonDecry.add(buttonSave);
@@ -190,7 +190,7 @@ public class UIHash extends JPanel {
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         ButtonDesign buttonGene = new ButtonDesign();
-        buttonGene.setText("Generate Hash");
+        buttonGene.setText("Tạo mã băm");
         buttonGene.setFont(new Font(buttonGene.getName(), Font.BOLD, 16));
         buttonGene.setColor1(Color.decode("#FF0000"));
         buttonGene.setPreferredSize(new Dimension(150,40));

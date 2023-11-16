@@ -1,6 +1,9 @@
 package form;
 
+import View.Main;
+import alorithms.VigenereCipher;
 import model.ButtonDesign;
+import model.ReadFile;
 import model.SaveData;
 
 import javax.swing.*;
@@ -13,11 +16,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class UIVigenere extends JPanel {
 
+    private Main main;
     private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
-    public UIVigenere(){
+    public UIVigenere(Main main){
+        this.main = main;
         init();
     }
 
@@ -58,15 +69,15 @@ public class UIVigenere extends JPanel {
 
         //nut Open File
         ButtonDesign buttonOpenFile = new ButtonDesign();
-        buttonOpenFile.setText("Open file");
+        buttonOpenFile.setText("Chọn file");
 
         //nut Save
         ButtonDesign buttonSave = new ButtonDesign();
-        buttonSave.setText("Save");
+        buttonSave.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy = new ButtonDesign();
-        buttonCopy.setText("Copy");
+        buttonCopy.setText("Sao chép");
 
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
@@ -74,7 +85,7 @@ public class UIVigenere extends JPanel {
 
         //nut Clear
         ButtonDesign buttonClear = new ButtonDesign();
-        buttonClear.setText("Clear");
+        buttonClear.setText("Xóa");
 
 
         panelButtonEncry.add(labelPathFile);
@@ -100,16 +111,16 @@ public class UIVigenere extends JPanel {
         //panel giao diện phần tao key
         JPanel panelKey = new JPanel();
         panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JLabel lableKey = new JLabel("Input Key: ");
-        JTextField textKey = new JTextField(15);
+        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Khóa k", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        JLabel lableKey = new JLabel("Nhập khóa: ");
+        TextField textKey = new TextField(30);
         //nut Create Key
         ButtonDesign buttonCreateKey = new ButtonDesign();
-        buttonCreateKey.setText("Create Key");
+        buttonCreateKey.setText("Tạo khóa");
 
         //save key
-        ButtonDesign buttonSaveKey = new ButtonDesign();
-        buttonSaveKey.setText("Copy");
+        ButtonDesign buttonCopyKey = new ButtonDesign();
+        buttonCopyKey.setText("Sao chép");
 
         //paste key
         ButtonDesign buttonPasteKey = new ButtonDesign();
@@ -117,25 +128,25 @@ public class UIVigenere extends JPanel {
 
         //open key
         ButtonDesign buttonOpenKey = new ButtonDesign();
-        buttonOpenKey.setText("Open");
+        buttonOpenKey.setText("Chọn");
 
         panelKey.add(lableKey);
         panelKey.add(textKey);
         panelKey.add(buttonCreateKey);
-        panelKey.add(buttonSaveKey);
+        panelKey.add(buttonCopyKey);
         panelKey.add(buttonPasteKey);
         panelKey.add(buttonOpenKey);
 
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "PlainText & CipherText", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ & Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         JComboBox listCombobox = new JComboBox(listPlaintext);
         listCombobox.setBackground(Color.white);
         JLabel labelplainCipher = new JLabel("P & C: ");
         listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType = new JLabel("Type: ");
-        JCheckBox checkBoxText = new JCheckBox("Text");
+        JLabel labelType = new JLabel("Kiểu: ");
+        JCheckBox checkBoxText = new JCheckBox("Văn bản");
         checkBoxText.setSelected(true);
         JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
@@ -189,11 +200,11 @@ public class UIVigenere extends JPanel {
 
         //nut Save
         ButtonDesign buttonSave_Encr = new ButtonDesign();
-        buttonSave_Encr.setText("Save");
+        buttonSave_Encr.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy_Encr = new ButtonDesign();
-        buttonCopy_Encr.setText("Copy");
+        buttonCopy_Encr.setText("Sao chép");
 
         //nut Upgrade
         ButtonDesign buttonUpgrade_Encr = new ButtonDesign();
@@ -225,13 +236,13 @@ public class UIVigenere extends JPanel {
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         ButtonDesign buttonEncry = new ButtonDesign();
-        buttonEncry.setText("Decrypted");
+        buttonEncry.setText("Mã hóa");
         buttonEncry.setFont(new Font(buttonEncry.getName(), Font.BOLD, 16));
         buttonEncry.setColor1(Color.decode("#FF0000"));
         buttonEncry.setPreferredSize(new Dimension(110, 40));
 
         ButtonDesign buttonDecry = new ButtonDesign();
-        buttonDecry.setText("Decrypted");
+        buttonDecry.setText("Giải mã");
         buttonDecry.setFont(new Font(buttonDecry.getName(), Font.BOLD, 16));
         buttonDecry.setColor1(Color.decode("#00AF17"));
         buttonDecry.setPreferredSize(new Dimension(110, 40));
@@ -269,6 +280,36 @@ public class UIVigenere extends JPanel {
                     File select = fileChooser.getSelectedFile();
                     String filePath = select.getAbsolutePath();
                     String data = textArea.getText();
+
+                    SaveData save = new SaveData();
+                    save.saveData(filePath, data);
+
+                }
+            }
+        });
+
+        buttonCopyKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = textKey.getText();
+                if(text != null){
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection data = new StringSelection(text);
+                    clipboard.setContents(data, null);
+                }
+            }
+        });
+        buttonSave_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int result = fileChooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File select = fileChooser.getSelectedFile();
+                    String filePath = select.getAbsolutePath();
+                    String data = textArea_Encry.getText();
 
                     SaveData save = new SaveData();
                     save.saveData(filePath, data);
@@ -323,6 +364,220 @@ public class UIVigenere extends JPanel {
                     }
                 }
 
+            }
+        });
+
+        buttonPasteKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable transferable = clipboard.getContents(null);
+
+                if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    try {
+                        String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                        textKey.setText(text);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (UnsupportedFlavorException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        });
+
+        //Tạo key
+        buttonCreateKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String key = new VigenereCipher().generateRandomString(12);
+                textKey.setText(key);
+            }
+        });
+        //đọc file chứa khóa và kiểm tra
+        buttonOpenKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int returnFile = fileChooser.showOpenDialog(null);
+
+                if(returnFile == JFileChooser.APPROVE_OPTION){
+
+                    File select = fileChooser.getSelectedFile();
+                    try {
+                        ReadFile readFile = new ReadFile();
+                        String text = readFile.readFiletoString(select.getAbsolutePath());
+                        textKey.setText(text);
+
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                }
+            }
+        });
+        // đưa du lieu tu vung ban ma len vung ban ro de giai ma hoac ma hoa tiep tuc
+        buttonUpgrade_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(textArea_Encry.getText());
+                textArea_Encry.setText("");
+            }
+        });
+
+
+        /*
+        xữ lý ma hóa và giải mã
+
+         */
+
+        buttonEncry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                VigenereCipher vigenereCipher = new VigenereCipher();
+
+                if (checkBoxText.isSelected()){
+
+                    String text = textArea.getText();
+                    if (textKey.getText().isEmpty() && text.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (text.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String output = "";
+                        if (listCombobox.getSelectedItem().equals("English alphabet")){
+                            output = vigenereCipher.encryption(text, textKey.getText());
+                        } else if (listCombobox.getSelectedItem().equals("Vietnamese alphabet")) {
+                            output = vigenereCipher.encryption_vie(text, textKey.getText());
+                        }
+
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() ){
+                    String input = textFieldFile.getText();
+
+                    if (textKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Error",JOptionPane.CANCEL_OPTION);
+                    }else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có dữ liệu để mã hóa hoặc giải mã","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có khóa","Error",JOptionPane.CANCEL_OPTION);
+                    }else {
+                        File file = new File(input);
+                        String extention = new ReadFile().getFileExtension(file);
+                        LocalDate now = LocalDate.now();
+                        LocalTime currentTime = LocalTime.now();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss"); // Định dạng giờ
+                        String formattedTime = currentTime.format(formatter); // Lấy chuỗi biểu diễn cho giờ hiện tại
+                        String timeWithoutColon = formattedTime.replace(":", "_"); // Bỏ dấu ":" từ chuỗi giờ
+                        String time = String.valueOf(now);
+                        String des =   "Vigenere_Encry_" + time +"_"+timeWithoutColon + "."+extention;
+                        if (file.exists()) {
+
+                            System.out.println(des);
+                            String text = "";
+                            ReadFile readFile = new ReadFile();
+                            try{
+                                if (listCombobox.getSelectedItem().equals("English alphabet")){
+                                    vigenereCipher.encryFile(input,main.getPathToSaveFile() +"\\" + des, textKey.getText(),"UK");
+                                } else if (listCombobox.getSelectedItem().equals("Vietnamese alphabet")) {
+                                    vigenereCipher.encryFile(input,main.getPathToSaveFile() +"\\" + des, textKey.getText(),"VN");
+                                }
+                                text = readFile.readFiletoString(main.getPathToSaveFile() +"\\" + des);
+                            }catch (Exception ex){
+                                JOptionPane.showMessageDialog(null, "Không thể mã hóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                                Path path = Paths.get(des);
+                                try {
+                                    Files.delete(path);
+                                } catch (IOException exc) {
+                                    throw new RuntimeException(exc);
+                                }
+                            }
+
+                            textArea_Encry.setText(text);
+                        }
+                        JOptionPane.showMessageDialog(null,"<html>Mã hóa thành công!<br>Tên file: <html>"+des+"<html><br> Địa chỉ lưu file: <html>"+ main.getPathToSaveFile() ,"Thông báo",JOptionPane.INFORMATION_MESSAGE);
+
+                    }
+                }
+            }
+        });
+
+        buttonDecry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                VigenereCipher vigenereCipher = new VigenereCipher();
+
+                if (checkBoxText.isSelected()){
+
+                    String text = textArea.getText();
+                    if (textKey.getText().isEmpty() && text.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (text.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String output = "";
+                        if (listCombobox.getSelectedItem().equals("English alphabet")){
+                            output = vigenereCipher.decryption(text, textKey.getText());
+                        } else if (listCombobox.getSelectedItem().equals("Vietnamese alphabet")) {
+                            output = vigenereCipher.decryption_vie(text, textKey.getText());
+                        }
+
+                        textArea_Encry.setText(output);
+                    }
+                }else if (checkBoxFile.isSelected() ){
+                    String input = textFieldFile.getText();
+
+                    if (textKey.getText().isEmpty() && input.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Error",JOptionPane.CANCEL_OPTION);
+                    }else if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có dữ liệu để mã hóa hoặc giải mã","Error",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không có khóa","Error",JOptionPane.CANCEL_OPTION);
+                    }else {
+                        File file = new File(input);
+                        String extention = new ReadFile().getFileExtension(file);
+                        LocalDate now = LocalDate.now();
+                        LocalTime currentTime = LocalTime.now();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss"); // Định dạng giờ
+                        String formattedTime = currentTime.format(formatter); // Lấy chuỗi biểu diễn cho giờ hiện tại
+                        String timeWithoutColon = formattedTime.replace(":", "_"); // Bỏ dấu ":" từ chuỗi giờ
+                        String time = String.valueOf(now);
+                        String des =   "Vigenere_Decry_" + time +"_"+timeWithoutColon + "."+extention;
+                        if (file.exists()) {
+
+                            System.out.println(des);
+                            String text = "";
+                            ReadFile readFile = new ReadFile();
+                            try{
+                                if (listCombobox.getSelectedItem().equals("English alphabet")){
+                                    vigenereCipher.decryFile(input,main.getPathToSaveFile() +"\\" + des, textKey.getText(),"UK");
+                                } else if (listCombobox.getSelectedItem().equals("Vietnamese alphabet")) {
+                                    vigenereCipher.decryFile(input,main.getPathToSaveFile() +"\\" + des, textKey.getText(),"VN");
+                                }
+                                text = readFile.readFiletoString(main.getPathToSaveFile() +"\\" + des);
+                            }catch (Exception ex){
+                                JOptionPane.showMessageDialog(null, "Không thể mã hóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                                Path path = Paths.get(des);
+                                try {
+                                    Files.delete(path);
+                                } catch (IOException exc) {
+                                    throw new RuntimeException(exc);
+                                }
+                            }
+
+                            textArea_Encry.setText(text);
+                        }
+                        JOptionPane.showMessageDialog(null,"<html>Mã hóa thành công!<br>Tên file: <html>"+des+"<html><br> Địa chỉ lưu file: <html>"+ main.getPathToSaveFile() ,"Thông báo",JOptionPane.INFORMATION_MESSAGE);
+
+                    }
+                }
             }
         });
 

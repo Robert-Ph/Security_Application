@@ -6,11 +6,34 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class AffineCipher {
 
 //    private int a;
 //    private int b;
+
+    public int[] generateKey(String nameType){
+        int[] result = new int[2];
+        int a=0;
+        int b=0;
+        if (nameType.equals("UK")){
+            a = ThreadLocalRandom.current().nextInt(1, 27);
+            b = ThreadLocalRandom.current().nextInt(1, 27);
+            if (checkKey(a,b,26) && a!=0 || b!=0){
+                result[0] = a;
+                result[1] = b;
+            }else generateKey(nameType);
+        }else if(nameType.equals("VN")){
+            a = ThreadLocalRandom.current().nextInt(1, 95);
+            b = ThreadLocalRandom.current().nextInt(1, 95);
+            if (checkKey(a,b,26) && a!=0 || b!=0){
+                result[0] = a;
+                result[1] = b;
+            }else generateKey(nameType);
+        }
+        return result;
+    }
     public String encryption(String data, int x, int y){
         String result="";
         if(checkKey(x,y, 26)){
@@ -214,23 +237,5 @@ public class AffineCipher {
 //        this.b = b;
 //    }
 
-    public static void main(String[] args) {
-        AffineCipher a = new AffineCipher();
-        String text ="Thinh Thinh";
-        int x=3;
-        int y=11;
-        String Y =a.encryption(text,x,y);
-        System.out.println(Y);
-        System.out.println(a.decryption(Y, x, y));
-        System.out.println(a.findModularInverse(3, 26));
-        System.out.println(Math.floorMod(9*(52 - 48) - y, 10)+48);
 
-//        try {
-//            a.encryFile("src\\example.txt","src\\e.txt", 3,11);
-//            a.decryFile("src\\e.txt","src\\e1.txt", 3,11);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-
-    }
 }

@@ -20,7 +20,8 @@ public class UIHill extends JPanel {
     private HillCipher hillCipher;
     private  int[][] arrKey;
     private Main main;
-    private final String[] listPlaintext = {"English alphabet", "Vietnamese alphabet"};
+    private static String text;
+    private final String[] listPlaintext = {"English alphabet"};
     private final String[] sizeKey = {"2", "3","4"};
 
     public UIHill(Main main) {
@@ -67,16 +68,16 @@ public class UIHill extends JPanel {
 
         //nut Open File
         ButtonDesign buttonOpenFile = new ButtonDesign();
-        buttonOpenFile.setText("Open file");
+        buttonOpenFile.setText("Chọn file");
         buttonOpenFile.setEnabled(false);
 
         //nut Save
         ButtonDesign buttonSave = new ButtonDesign();
-        buttonSave.setText("Save");
+        buttonSave.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy = new ButtonDesign();
-        buttonCopy.setText("Copy");
+        buttonCopy.setText("Sao chép");
 
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
@@ -84,7 +85,7 @@ public class UIHill extends JPanel {
 
         //nut Clear
         ButtonDesign buttonClear = new ButtonDesign();
-        buttonClear.setText("Clear");
+        buttonClear.setText("Xóa");
 
         panelButtonEncry.add(labelPathFile);
         panelButtonEncry.add(textFieldFile);
@@ -109,26 +110,26 @@ public class UIHill extends JPanel {
         //panel giao diện phần tao key
         JPanel panelKey = new JPanel();
         panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Khóa", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 //        JLabel lableKey = new JLabel("Key: ");
-        TextArea textKey = new TextArea(4,26);
+        TextArea textKey = new TextArea(4,35);
         textKey.setEditable(false);
 
-        JLabel size = new JLabel("size: ");
+        JLabel size = new JLabel("Size: ");
         JComboBox listSizeKey = new JComboBox(sizeKey);
         listSizeKey.setBackground(Color.white);
 
         //nut Create Key
         ButtonDesign buttonCreateKey = new ButtonDesign();
-        buttonCreateKey.setText("Create Key");
+        buttonCreateKey.setText("Tạo khóa");
 
         //nut Create Key
         ButtonDesign buttonOpenKey = new ButtonDesign();
-        buttonOpenKey.setText("open key");
+        buttonOpenKey.setText("Chọn");
 
         //nut Create Key
         ButtonDesign buttonSaveKey = new ButtonDesign();
-        buttonSaveKey.setText("save key");
+        buttonSaveKey.setText("Lưu");
 
 //        panelKey.add(lableKey);
         panelKey.add(textKey);
@@ -141,13 +142,13 @@ public class UIHill extends JPanel {
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "PlainText & CipherText", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ & Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         JComboBox listCombobox = new JComboBox(listPlaintext);
         listCombobox.setBackground(Color.white);
         JLabel labelplainCipher = new JLabel("P & C: ");
         listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType = new JLabel("Type: ");
-        JCheckBox checkBoxText = new JCheckBox("Text");
+        JLabel labelType = new JLabel("Kiểu: ");
+        JCheckBox checkBoxText = new JCheckBox("Văn bản");
         checkBoxText.setSelected(true);
 //        JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
@@ -200,11 +201,11 @@ public class UIHill extends JPanel {
 
         //nut Save
         ButtonDesign buttonSave_Encr = new ButtonDesign();
-        buttonSave_Encr.setText("Save");
+        buttonSave_Encr.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy_Encr = new ButtonDesign();
-        buttonCopy_Encr.setText("Copy");
+        buttonCopy_Encr.setText("Sao chép");
 
         //nut Upgrade
         ButtonDesign buttonUpgrade_Encr = new ButtonDesign();
@@ -236,13 +237,13 @@ public class UIHill extends JPanel {
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         ButtonDesign buttonEncry = new ButtonDesign();
-        buttonEncry.setText("Encrypted");
+        buttonEncry.setText("Mã hóa");
         buttonEncry.setFont(new Font(buttonEncry.getName(), Font.BOLD, 16));
         buttonEncry.setColor1(Color.decode("#FF0000"));
         buttonEncry.setPreferredSize(new Dimension(110, 40));
 
         ButtonDesign buttonDecry = new ButtonDesign();
-        buttonDecry.setText("Decrypted");
+        buttonDecry.setText("Giải mã");
         buttonDecry.setFont(new Font(buttonDecry.getName(), Font.BOLD, 16));
         buttonDecry.setColor1(Color.decode("#00AF17"));
         buttonDecry.setPreferredSize(new Dimension(110, 40));
@@ -358,7 +359,6 @@ public class UIHill extends JPanel {
 
                 if(returnFile == JFileChooser.APPROVE_OPTION){
                     File select = fileChooser.getSelectedFile();
-//                    textFieldFile.setText(select.getAbsolutePath());
                     hillCipher = new HillCipher();
                     int[][] arr = hillCipher.readMatrix(select.getAbsolutePath());
                     if (hillCipher.getMatrix().checkMatrix(arr)){
@@ -396,6 +396,25 @@ public class UIHill extends JPanel {
             }
         });
 
+        //Lưu dữ liệu đã mã hóa
+        buttonSave_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int result = fileChooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File select = fileChooser.getSelectedFile();
+                    String filePath = select.getAbsolutePath();
+                    String data = textArea_Encry.getText();
+
+                    SaveData save = new SaveData();
+                    save.saveData(filePath, data);
+
+                }
+            }
+        });
         buttonClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -413,9 +432,22 @@ public class UIHill extends JPanel {
                 int[][] key = arrKey;
                 hillCipher = new HillCipher();
                 String data =textArea.getText();
-                String out = hillCipher.hillCipherEncrypt(data, key);
-                String encry = hillCipher.stringData(data, out,0, true );
-                textArea_Encry.setText(encry);
+
+                if (checkBoxText.isSelected()){
+                    String text = textArea.getText();
+                    if (textKey.getText().isEmpty() && text.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (text.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Khóa không tồn tại","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String out = hillCipher.hillCipherEncrypt(data, arrKey);
+                        String text1=textArea.getText();
+                        String encry = hillCipher.stringData(text1, out,0, true );
+                        textArea_Encry.setText(encry);
+                    }
+                }
             }
         });
 
@@ -426,10 +458,21 @@ public class UIHill extends JPanel {
                 hillCipher = new HillCipher();
                 String data =textArea.getText();
 
-                String out = hillCipher.hillCipherDecrypt(hillCipher.splitDataIsLetter(data).toUpperCase(), key);
-                int num = hillCipher.numsize(data, key);
-                String encry = hillCipher.stringData(data.substring(0,data.length()-arrKey.length), out, num, false );
-                textArea_Encry.setText(encry);
+                if (checkBoxText.isSelected()){
+                    String text = textArea.getText();
+                    if (textKey.getText().isEmpty() && text.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (text.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else if (textKey.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Khóa không tồn tại","Lỗi",JOptionPane.CANCEL_OPTION);
+                    } else {
+                        String out = hillCipher.hillCipherDecrypt(hillCipher.splitDataIsLetter(data).toUpperCase(), key);
+                        int num = hillCipher.numsize(data, key);
+                        String encry = hillCipher.stringData(data.substring(0,data.length()-arrKey.length), out, num, false );
+                        textArea_Encry.setText(encry);
+                    }
+                }
             }
         });
     }

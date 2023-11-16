@@ -140,20 +140,5 @@ public class AtbashCipher {
     public void read(String path){
         new ReadFile().readFile(p, path);
     }
-    public static void main(String[] args) {
-        AtbashCipher a = new AtbashCipher();
-        String text = "thinh thinh";
-        String y = a.encryption(text);
-        System.out.println(y);
-        String x = a.decryption(y);
-        System.out.println(x);
 
-        try {
-            a.encryFile("src\\example.txt","src\\e.txt");
-            a.decryFile("src\\e.txt","src\\e1.txt");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
 }

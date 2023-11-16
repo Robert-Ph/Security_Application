@@ -15,51 +15,6 @@ public class HillCipher {
         return matrix;
     }
 
-    public static void main(String[] args) {
-        HillCipher hillCipher = new HillCipher();
-
-        int[][] keyMatrix = {{3, 3}, {2, 5}};
-        String plaintext = "help 123";
-
-        String encryptedText = hillCipher.hillCipherEncrypt(plaintext, keyMatrix);
-        String g =hillCipher.stringData(plaintext, encryptedText,2, true);
-        System.out.println("Văn bản đã mã hóa: " + encryptedText);
-        System.out.println(hillCipher.stringData(plaintext, encryptedText,2,true));
-
-        int num = hillCipher.numsize(encryptedText, keyMatrix);
-        System.out.println("so: "+num);
-
-        String decryptedText =hillCipher.hillCipherDecrypt(encryptedText, keyMatrix);
-        System.out.println("Văn bản đã giải mã: " + decryptedText);
-        System.out.println(hillCipher.stringData(g.substring(0,g.length()-keyMatrix.length), decryptedText,num,false));
-//        int[][] result=hillCipher.createKey(2);
-//        int[] r = hillCipher.matrix.multiplyMatrices(result[0],keyMatrix);
-//        System.out.println(r[0]);
-
-
-//        for (int i = 0; i < result.length; i++) {
-//            for (int j = 0; j < result[i].length; j++) {
-//                System.out.print(result[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//        String data ="DPLE 12";
-//
-//        String le = data.substring(data.length()-keyMatrix[0].length);
-//        int[] arr = new int[le.length()];
-//        for (int i=0; i<le.length();i++){
-//            arr[i] =(int) le.charAt(i)-65;
-//        }
-//        int[][] key = hillCipher.matrix.calculateInverseUsingDeterminant(keyMatrix);
-//        int[] numsize = hillCipher.matrix.multiplyMatrices(arr, key);
-//
-//        String in ="HELP l 12";
-//        String input ="";
-//        for (int i=0; i<in.length();i++){
-//            input += Character.isLetter(in.charAt(i)) ? in.charAt(i) : "";
-//        }
-//        System.out.println(input);
-    }
 
     public int[][] createKey(int size){
         int[][] result = matrix.generateRandomTwoDArray(size);
@@ -126,7 +81,7 @@ public class HillCipher {
                 }
             }
         }else {
-//            m =splitString(data.substring(0,data.length()-num),n);
+
             if (matrix.calculateDeterminant(keyMatrix)>0 && matrix.checkKey(matrix.calculateDeterminant(keyMatrix),26)){
                 for (int i=0; i<m.length; i++){
                     int[] input = m[i];
@@ -142,64 +97,11 @@ public class HillCipher {
         return decryptedText.toString();
     }
 
-//    public  String hillCipherDecrypt(String data, int[][] keyMatrix) {
-//        String decryptedText ="";
-//        int[] numsize=null;
-//        if (matrix.calculateDeterminant(keyMatrix)>0 && matrix.checkKey(matrix.calculateDeterminant(keyMatrix),26)){
-//            int n = keyMatrix.length;
-//
-//            int[][] key = matrix.calculateInverseUsingDeterminant(keyMatrix);
-//
-//
-//            String le = data.substring(data.length()-n).toUpperCase();
-//            int[] arr = new int[le.length()];
-//            for (int i=0; i<le.length();i++){
-//                arr[i] =(int) le.charAt(i)-65;
-//            }
-//
-//            numsize = matrix.multiplyMatrices(arr, key);
-//            int num =Math.floorMod(numsize[0],26);
-//            int[][] m = splitStringDecr(data.substring(0,data.length()-n),n);
-//            if (num==0){
-//                    for (int i=0; i<m.length; i++){
-//                        int[] input = m[i];
-//                        int[] out = matrix.multiplyMatrices(input,key);
-//                        for (int j=0; j<out.length;j++){
-//                            char text = (char) (Math.floorMod(out[j], 26) + 65);
-//                            decryptedText +=text;
-//                        }
-//
-//                    }
-//
-//            }else {
-//                    for (int i=0; i<m.length; i++){
-//                        int[] input = m[i];
-//                        int[] out = matrix.multiplyMatrices(input,key);
-//                        for (int j=0; j<out.length;j++){
-//                            char text = (char) (Math.floorMod(out[j], 26) + 65);
-//                            decryptedText +=text;
-//                        }
-//                    }
-//            }
-//            decryptedText = decryptedText.substring(0, decryptedText.length()-num);
-//
-//        }
-////        String result = stringData(data.substring(0, data.length()-keyMatrix.length), decryptedText, numsize[0], false);
-//
-//
-//        return decryptedText;
-//    }
-
-
 
     public  int[][] splitString(String data, int numberOfParts) {
 
         String input = data.replaceAll(" ", "").toUpperCase();
-//        String input ="";
-//        for (int i=0; i<data.length();i++){
-//            input += Character.isLetter(data.charAt(i)) ? data.charAt(i) : "";
-//        }
-//        input.toUpperCase();
+
         int length = input.length();
         int partLength = length / numberOfParts;
         int padding = length % numberOfParts;
@@ -297,13 +199,13 @@ public class HillCipher {
     }
 
     public String stringData(String data, String encr, int numaize, boolean bool){
-//        String[] input = data.split("\\s");
+
         String y ="";
         int num=0;
         int size=0;
         for (int i=0; i<data.length();i++){
-            if(Character.isLetter(data.charAt(i)) && size<= encr.length()){
-                y+=encr.charAt(i-num);
+            if(Character.isLetter(data.charAt(i)) && i<= encr.length()){
+                y+= encr.charAt(i-num);
                 size++;
             }else {
                 y+= data.charAt(i);
@@ -331,7 +233,7 @@ public class HillCipher {
                 }
             }
             result += encr.substring(size);
-//        result = numaize >0? result.substring(0, result.length()-numaize-1) : result;
+
         }
 
         return result;

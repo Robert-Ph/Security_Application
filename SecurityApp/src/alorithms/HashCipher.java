@@ -62,9 +62,5 @@ public class HashCipher {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        HashCipher sha = new HashCipher();
-        String out = sha.hashfile("F:\\Lab\\Security_Application\\SecurityApp\\src\\algorithm\\text", "SHA-1");
-        System.out.println(out);
-    }
+
 }

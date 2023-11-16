@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 public class Main extends JFrame{
@@ -39,10 +40,10 @@ public class Main extends JFrame{
     }
     public void init(){
         this.setTitle("CryptaKey");
-        ImageIcon image = new ImageIcon("ImageIcon\\logo.png");
+        URL url = Main.class.getResource("/ImageIcon/logo.png");
+        ImageIcon image = new ImageIcon(url);
 
 
-//        form = new PanelBody();
         form = new panel(this);
         menu = new PanleMenu(this);
         this.getContentPane().add(menu, BorderLayout.WEST);

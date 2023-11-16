@@ -141,23 +141,7 @@ public class CaesarCipher {
     }
 
 
-    public static void main(String[] args) {
-        CaesarCipher c = new CaesarCipher();
-        String text = "Thịnh 123";
-        String y = c.encryption_vie(text, 2);
-        System.out.println(y);
-        String x = c.decryption_vie(y, 2);
-        System.out.println(x);
 
-        try {
-            c.encryFile("src\\example.txt","src\\e.txt", 2);
-            c.decryFile("src\\e.txt","src\\e1.txt", 2);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-
-    }
 
 
 }

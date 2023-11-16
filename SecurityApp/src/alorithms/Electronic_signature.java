@@ -4,7 +4,7 @@ import javax.crypto.Cipher;
 import java.security.*;
 import java.util.Base64;
 
-public class electronic_signature {
+public class Electronic_signature {
     private HashCipher hashCipher = new HashCipher();
     private PrivateKey privateKey;
     private PublicKey publicKey;
@@ -68,26 +68,16 @@ public class electronic_signature {
         return new String(decryptedBytes, "UTF-8");
     }
 
-
-    public static void main(String[] args) throws Exception {
-        electronic_signature electronicSignature = new electronic_signature();
-        String path ="src/example.txt";
-        String p="src/hh.txt.txt";
-
-        KeyPair key = electronicSignature.generateRSAKeyPair();
-
-
-
-        PrivateKey privateKey = key.getPrivate();
-        PublicKey publicKey = key.getPublic();
-
-        String hash = electronicSignature.hashFile(path);
-        String ve = electronicSignature.hashFile(p);
-        String sign = electronicSignature.signData(hash,privateKey);
-
-
-        System.out.println("ky: "+ sign);
-        System.out.println("Verify: "+electronicSignature.verifySignature(sign, publicKey, ve));
-
+    public   String keyToString(Key key) {
+        return bytesToHex(key.getEncoded());
     }
+
+    public   String bytesToHex(byte[] bytes) {
+        StringBuilder result = new StringBuilder();
+        for (byte b : bytes) {
+            result.append(String.format("%02X", b));
+        }
+        return result.toString();
+    }
+
 }

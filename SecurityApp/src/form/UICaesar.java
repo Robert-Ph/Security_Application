@@ -14,6 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class UICaesar extends JPanel {
@@ -61,15 +64,15 @@ public class UICaesar extends JPanel {
 
         //nut Open File
         ButtonDesign buttonOpenFile = new ButtonDesign();
-        buttonOpenFile.setText("Open file");
+        buttonOpenFile.setText("Chọn file");
 
         //nut Save
         ButtonDesign buttonSave = new ButtonDesign();
-        buttonSave.setText("Save");
+        buttonSave.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy = new ButtonDesign();
-        buttonCopy.setText("Copy");
+        buttonCopy.setText("Sao chép");
 
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
@@ -77,7 +80,7 @@ public class UICaesar extends JPanel {
 
         //button clear
         ButtonDesign buttonClear = new ButtonDesign();
-        buttonClear.setText("Clear");
+        buttonClear.setText("xóa");
 
         panelButtonEncry.add(labelPathFile);
         panelButtonEncry.add(textFieldFile);
@@ -102,12 +105,12 @@ public class UICaesar extends JPanel {
         //panel giao diện phần tao key
         JPanel panelKey = new JPanel();
         panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JLabel lableKey = new JLabel("Input Key: ");
+        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Khóa k", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        JLabel lableKey = new JLabel("Nhập khóa: ");
         JTextField textKey = new JTextField(15);
         //nut Create Key
         ButtonDesign buttonCreateKey = new ButtonDesign();
-        buttonCreateKey.setText("Create Key");
+        buttonCreateKey.setText("Tạo khóa");
 
         panelKey.add(lableKey);
         panelKey.add(textKey);
@@ -116,13 +119,13 @@ public class UICaesar extends JPanel {
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "PlainText & CipherText", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ & Bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         JComboBox listCombobox = new JComboBox(listPlaintext);
         listCombobox.setBackground(Color.white);
         JLabel labelplainCipher = new JLabel("P & C: ");
         listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType= new JLabel("Type: ");
-        JCheckBox checkBoxText = new JCheckBox("Text");
+        JLabel labelType= new JLabel("Kiểu: ");
+        JCheckBox checkBoxText = new JCheckBox("Văn bản");
         checkBoxText.setSelected(true);
         JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
@@ -175,11 +178,11 @@ public class UICaesar extends JPanel {
 
         //nut Save
         ButtonDesign buttonSave_Encr = new ButtonDesign();
-        buttonSave_Encr.setText("Save");
+        buttonSave_Encr.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy_Encr = new ButtonDesign();
-        buttonCopy_Encr.setText("Copy");
+        buttonCopy_Encr.setText("Sao chép");
 
         //nut Upgrade
         ButtonDesign buttonUpgrade_Encr = new ButtonDesign();
@@ -211,13 +214,13 @@ public class UICaesar extends JPanel {
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         ButtonDesign buttonEncry = new ButtonDesign();
-        buttonEncry.setText("Encrypted");
+        buttonEncry.setText("Mã hóa");
         buttonEncry.setFont(new Font(buttonEncry.getName(), Font.BOLD, 16));
         buttonEncry.setColor1(Color.decode("#FF0000"));
         buttonEncry.setPreferredSize(new Dimension(110,40));
 
         ButtonDesign buttonDecry = new ButtonDesign();
-        buttonDecry.setText("Decrypted");
+        buttonDecry.setText("Giải mã");
         buttonDecry.setFont(new Font(buttonDecry.getName(), Font.BOLD, 16));
         buttonDecry.setColor1(Color.decode("#00AF17"));
         buttonDecry.setPreferredSize(new Dimension(110,40));
@@ -283,6 +286,7 @@ public class UICaesar extends JPanel {
                 }
             }
         });
+
         buttonCopy_Encr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -314,7 +318,34 @@ public class UICaesar extends JPanel {
 
             }
         });
+        // đưa du lieu tu vung ban ma len vung ban ro de giai ma hoac ma hoa tiep tuc
+        buttonUpgrade_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(textArea_Encry.getText());
+                textArea_Encry.setText("");
+            }
+        });
 
+        //Lưu dữ liệu đã mã hóa
+        buttonSave_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int result = fileChooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File select = fileChooser.getSelectedFile();
+                    String filePath = select.getAbsolutePath();
+                    String data = textArea_Encry.getText();
+
+                    SaveData save = new SaveData();
+                    save.saveData(filePath, data);
+
+                }
+            }
+        });
 
         buttonCreateKey.addActionListener(new ActionListener() {
             @Override
@@ -338,11 +369,11 @@ public class UICaesar extends JPanel {
                 String input = textArea.getText();
                 if (checkBoxText.isSelected()){
                     if (textKey.getText().isEmpty() && input.isEmpty()){
-                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Lỗi",JOptionPane.CANCEL_OPTION);
                     } else if (input.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu","Lỗi",JOptionPane.CANCEL_OPTION);
                     } else if (textKey.getText().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                        JOptionPane.showMessageDialog(null, "Khóa không tồn tại","Lỗi",JOptionPane.CANCEL_OPTION);
                     } else {
                         int key = Integer.parseInt(textKey.getText());
                         CaesarCipher cipher = new CaesarCipher();
@@ -351,19 +382,28 @@ public class UICaesar extends JPanel {
                     }
                 }else if (checkBoxFile.isSelected() && (!textFieldFile.getText().isEmpty())){
                     File file = new File(textFieldFile.getText());
+                    String extention = new ReadFile().getFileExtension(file);
+                    LocalDate now = LocalDate.now();
+                    LocalTime currentTime = LocalTime.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss"); // Định dạng giờ
+                    String formattedTime = currentTime.format(formatter); // Lấy chuỗi biểu diễn cho giờ hiện tại
+                    String timeWithoutColon = formattedTime.replace(":", "_"); // Bỏ dấu ":" từ chuỗi giờ
+                    String time = String.valueOf(now);
+                    String des =   "Caesar_Encry_" + time +"_"+timeWithoutColon + "."+extention;
                     if (file.exists()){
                         int key = Integer.parseInt(textKey.getText());
                         CaesarCipher cipher = new CaesarCipher();
                         String output = null;
                         String text="";
                         try {
-                            cipher.encryFile(input,"kk",key);
+                            cipher.encryFile(input,main.getPathToSaveFile()+"\\"+des,key);
                             ReadFile readFile = new ReadFile();
-                            text = readFile.readFiletoString("kk");
+                            text = readFile.readFiletoString(main.getPathToSaveFile()+"\\"+des);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                         textArea_Encry.setText(text);
+                        JOptionPane.showMessageDialog(null,"<html>Mã hóa thành công!<br>Tên file: <html>"+des+"<html><br> Địa chỉ lưu file: <html>"+ main.getPathToSaveFile() ,"Thông báo",JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
 
@@ -379,11 +419,11 @@ public class UICaesar extends JPanel {
 
                 if (checkBoxText.isSelected()){
                     if (textKey.getText().isEmpty() && input.isEmpty()){
-                        JOptionPane.showMessageDialog(null, "Not data and key","Error",JOptionPane.CANCEL_OPTION);
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu và khóa","Lỗi",JOptionPane.CANCEL_OPTION);
                     } else if (input.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Not data","Error",JOptionPane.CANCEL_OPTION);
+                        JOptionPane.showMessageDialog(null, "Không tồn tại dữ liệu","Lỗi",JOptionPane.CANCEL_OPTION);
                     } else if (textKey.getText().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Not key","Error",JOptionPane.CANCEL_OPTION);
+                        JOptionPane.showMessageDialog(null, "Khóa không tồn tại","Lỗi",JOptionPane.CANCEL_OPTION);
                     } else {
                         int key = Integer.parseInt(textKey.getText());
                         CaesarCipher cipher = new CaesarCipher();
@@ -392,24 +432,31 @@ public class UICaesar extends JPanel {
                     }
                 }else if (checkBoxFile.isSelected() && (!textFieldFile.getText().isEmpty())){
                     File file = new File(textFieldFile.getText());
+                    String extention = new ReadFile().getFileExtension(file);
+                    LocalDate now = LocalDate.now();
+                    LocalTime currentTime = LocalTime.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss"); // Định dạng giờ
+                    String formattedTime = currentTime.format(formatter); // Lấy chuỗi biểu diễn cho giờ hiện tại
+                    String timeWithoutColon = formattedTime.replace(":", "_");// Bỏ dấu ":" từ chuỗi giờ
+                    String time = String.valueOf(now);
+                    String des =   "Caesar_Decry_" + time +"_"+timeWithoutColon +"."+ extention;
                     if (file.exists()){
                         int key = Integer.parseInt(textKey.getText());
                         CaesarCipher cipher = new CaesarCipher();
                         String output = null;
                         String text="";
                         try {
-                            cipher.decryFile(input,"kk",key);
+                            cipher.decryFile(input,main.getPathToSaveFile()+"\\"+des,key);
                             ReadFile readFile = new ReadFile();
-                            text = readFile.readFiletoString("kk");
+                            text = readFile.readFiletoString(main.getPathToSaveFile()+"\\"+des);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                         textArea_Encry.setText(text);
+                        JOptionPane.showMessageDialog(null,"<html>Giải mã thành công!<br>Tên file: <html>"+des+"<html><br> Địa chỉ lưu file: <html>"+ main.getPathToSaveFile() ,"Thông báo",JOptionPane.INFORMATION_MESSAGE);
+
                     }
                 }
-
-
-
             }
         });
     }

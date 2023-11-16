@@ -106,29 +106,6 @@ public class DESCipher {
         this.key = key;
     }
 
-    public static void main(String[] args) throws Exception {
-        DESCipher des = new DESCipher();
-        // Khởi tạo dữ liệu cần mã hóa
-        String originalData = "thinh thinh";
 
-        // Tạo khóa bí mật DES
-        SecretKey secretKey = des.generateDESKey();
-        String base64Key = Base64.getEncoder().encodeToString(secretKey.getEncoded());
-        System.out.println("Khóa DES: " + base64Key);
-        // Mã hóa dữ liệu
-        String encryptedData = des.encryptDES(originalData);
-        System.out.println("Encrypted Data: " + encryptedData);
-
-        // Giải mã dữ liệu
-        String decryptedData = des.decryptDES(encryptedData);
-        System.out.println("Decrypted Data: " + decryptedData);
-//
-//        try {
-//            des.encryFile("src\\example.txt","src\\e.txt");
-//            des.decryFile("src\\e.txt","src\\e1.txt");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-    }
 
 }

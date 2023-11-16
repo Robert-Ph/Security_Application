@@ -1,27 +1,6 @@
 package model;
 
 public class Matrix {
-    public static void main(String[] args) {
-        Matrix mat = new Matrix();
-        int[][] matri = {
-                {3,3},
-                {2,5}
-        };
-
-        int[][] inverseMatrix = mat.calculateInverseUsingDeterminant(matri);
-
-        if (inverseMatrix != null) {
-            System.out.println("Inverse Matrix:");
-            mat.printMatrix(inverseMatrix);
-        } else {
-            System.out.println("Matrix is not invertible.");
-        }
-
-//        int[][] inverseMatrix = mat.calculateInverse(matri);
-//
-//        System.out.println("Inverse Matrix:");
-//        mat.printMatrix(inverseMatrix);
-    }
 
 
     /*

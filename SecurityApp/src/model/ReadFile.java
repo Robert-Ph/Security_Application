@@ -112,14 +112,12 @@ public class ReadFile {
             throw new RuntimeException(e);
         }
     }
-    public static void main(String[] args) { ReadFile r = new ReadFile();
-        Map<Integer, String> p = new HashMap<>();
-        r.readFile(p,"Plaintext and Ciphertext\\Vietnames_Alphabet_sound");
-        Set<Integer> set = p.keySet();
-        for (Integer key : set) {
-            System.out.println(key + "," + p.get(key));
 
+    public boolean checkStringEquaByte(String text, int... numByte){
+        for (int i: numByte){
+            if (text.length()==i) return true;
         }
-//
+        return false;
     }
+
 }

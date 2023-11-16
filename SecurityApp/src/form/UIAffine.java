@@ -59,15 +59,15 @@ public class UIAffine extends JPanel{
 
         //nut Open File
         ButtonDesign buttonOpenFile = new ButtonDesign();
-        buttonOpenFile.setText("Open file");
+        buttonOpenFile.setText("Chọn file");
 
         //nut Save
         ButtonDesign buttonSave = new ButtonDesign();
-        buttonSave.setText("Save");
+        buttonSave.setText("Lưu");
 
         //nut Copy
         ButtonDesign buttonCopy = new ButtonDesign();
-        buttonCopy.setText("Copy");
+        buttonCopy.setText("Sao chép");
 
         //nut Paste
         ButtonDesign buttonPaste = new ButtonDesign();
@@ -75,7 +75,7 @@ public class UIAffine extends JPanel{
 
         //nut Clear
         ButtonDesign buttonClear = new ButtonDesign();
-        buttonClear.setText("Clear");
+        buttonClear.setText("Xóa");
 
 
         panelButtonEncry.add(labelPathFile);
@@ -101,15 +101,15 @@ public class UIAffine extends JPanel{
         //panel giao diện phần tao key
         JPanel panelKey = new JPanel();
         panelKey.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Key", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        JLabel lableKey = new JLabel("Input Key: a:");
+        panelKey.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Khóa k", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        JLabel lableKey = new JLabel("Nhập khóa: a:");
         JTextField textKeya = new JTextField(8);
         JLabel lableKeyb = new JLabel(" b:");
         JTextField textKeyb = new JTextField(8);
 
         //nut Create Key
         ButtonDesign buttonCreateKey = new ButtonDesign();
-        buttonCreateKey.setText("Create Key");
+        buttonCreateKey.setText("Tạo khóa");
 
         panelKey.add(lableKey);
         panelKey.add(textKeya);
@@ -120,13 +120,13 @@ public class UIAffine extends JPanel{
         //panel giao dien plantext
         JPanel panelPlaintext = new JPanel();
         panelPlaintext.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "PlainText & CipherText", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelPlaintext.setBorder(new TitledBorder(new LineBorder(new Color(0x808080), 1), "Bản rõ & bản mã", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         JComboBox listCombobox = new JComboBox(listPlaintext);
         listCombobox.setBackground(Color.white);
         JLabel labelplainCipher = new JLabel("P & C: ");
         listCombobox.setPreferredSize(new Dimension(220, 20));
-        JLabel labelType= new JLabel("Type: ");
-        JCheckBox checkBoxText = new JCheckBox("Text");
+        JLabel labelType= new JLabel("Kiểu: ");
+        JCheckBox checkBoxText = new JCheckBox("văn bản");
         checkBoxText.setSelected(true);
         JCheckBox checkBoxFile = new JCheckBox("File");
         ActionListener actionListener = new ActionListener() {
@@ -250,6 +250,20 @@ public class UIAffine extends JPanel{
             }
         });
 
+        buttonCreateKey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int[] arrKey = new int[2];
+                if (listCombobox.getSelectedItem().equals("English alphabet")){
+                    arrKey = new AffineCipher().generateKey("UK");
+                } else if (listCombobox.getSelectedItem().equals("Vietnamese alphabet")) {
+                    arrKey = new AffineCipher().generateKey("VN");
+                }
+                textKeya.setText(String.valueOf(arrKey[0]));
+                textKeyb.setText(String.valueOf(arrKey[1]));
+
+            }
+        });
         buttonSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -280,6 +294,16 @@ public class UIAffine extends JPanel{
                 }
             }
         });
+
+        // đưa du lieu tu vung ban ma len vung ban ro de giai ma hoac ma hoa tiep tuc
+        buttonUpgrade_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(textArea_Encry.getText());
+                textArea_Encry.setText("");
+            }
+        });
+
         buttonClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -317,6 +341,25 @@ public class UIAffine extends JPanel{
 
             }
         });
+        //Lưu dữ liệu đã mã hóa
+        buttonSave_Encr.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setPreferredSize(new Dimension(700, 400));
+                int result = fileChooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File select = fileChooser.getSelectedFile();
+                    String filePath = select.getAbsolutePath();
+                    String data = textArea_Encry.getText();
+
+                    SaveData save = new SaveData();
+                    save.saveData(filePath, data);
+
+                }
+            }
+        });
 
 
         //envent
@@ -324,8 +367,8 @@ public class UIAffine extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String input = textArea.getText();
-                int a = Integer.parseInt(lableKey.getText());
-                int b = Integer.parseInt(lableKeyb.getText());
+                int a = Integer.parseInt(textKeya.getText());
+                int b = Integer.parseInt(textKeyb.getText());
                 AffineCipher cipher = new AffineCipher();
                 String output = cipher.encryption(input,a,b);
                 textArea_Encry.setText(output);
@@ -336,8 +379,8 @@ public class UIAffine extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String input = textArea.getText();
-                int a = Integer.parseInt(lableKey.getText());
-                int b = Integer.parseInt(lableKeyb.getText());
+                int a = Integer.parseInt(textKeya.getText());
+                int b = Integer.parseInt(textKeyb.getText());
                 AffineCipher cipher = new AffineCipher();
                 String output = cipher.decryption(input,a,b);
                 textArea_Encry.setText(output);

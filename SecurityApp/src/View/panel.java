@@ -30,14 +30,14 @@ public class panel extends JPanel {
         panel_1.setLayout(new GridLayout(3,1));
         panel_1.setBackground(Color.white);
 
-        JLabel text = new JLabel("Data Security Application");
+        JLabel text = new JLabel("Ứng Dụng Bảo Mật Dữ Liệu");
         text.setHorizontalAlignment(SwingConstants.CENTER);
         text.setVerticalAlignment(SwingConstants.CENTER);
         text.setForeground(Color.red);
         text.setBorder(new EmptyBorder(20,20,20,20));
         text.setFont(new Font(text.getName(), Font.BOLD, 48));
 
-        JLabel about = new JLabel("<html> Version: 1.0.0 (Beta) <br> Release date: 8/11/2023");
+        JLabel about = new JLabel("<html> Phiên bản: 1.0.0 (Beta) <br> Ngày phát hành: 8/11/2023 <br> Người phát triển: Phan Trường Thịnh_20130181");
         about.setFont(new Font(text.getName(), Font.ITALIC, 24));
         about.setHorizontalAlignment(SwingConstants.CENTER);
         about.setVerticalAlignment(SwingConstants.CENTER);
@@ -48,7 +48,7 @@ public class panel extends JPanel {
 
         panel_2 = new JPanel();
         panel_2.setPreferredSize(new Dimension(1000, 200));
-        panel_2.setBorder(new TitledBorder(new LineBorder(new Color(0x808080),1), "Setting", TitledBorder.LEADING,TitledBorder.TOP, null, null));
+        panel_2.setBorder(new TitledBorder(new LineBorder(new Color(0x808080),1), "Cài đặt", TitledBorder.LEADING,TitledBorder.TOP, null, null));
 //        panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
 
         JLabel  titleSeting = new JLabel("Địa chỉ lưu dữ liệu:");

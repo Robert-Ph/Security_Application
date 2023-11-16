@@ -3,15 +3,25 @@ package alorithms;
 import model.ReadFile;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class VigenereCipher {
 
     private String key;
+
+    public  String generateRandomString(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        StringBuilder sb = new StringBuilder(length);
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            sb.append(characters.charAt(index));
+        }
+
+        return sb.toString();
+    }
     public String encryption(String data, String key){
         String result="";
         for (int i=0; i< data.length(); i++){
@@ -102,7 +112,7 @@ public class VigenereCipher {
         return result;
     }
 
-    public void encryFile(String sourceFile, String desFile, String key) throws Exception {
+    public void encryFile(String sourceFile, String desFile, String key, String nameType) throws Exception {
         File file = new File(sourceFile);
         String data ="";
         if(file.isFile()){
@@ -113,7 +123,11 @@ public class VigenereCipher {
             while ((byteRead = fis.readLine())!=null){
                 data += byteRead;
             }
-            fos.write(encryption(data, key));
+            if (nameType.equals("VN")){
+                fos.write(encryption_vie(data, key));
+            }else if (nameType.equals("UK")){
+                fos.write(encryption(data, key));
+            }
             fis.close();
             fos.flush();
             fos.close();
@@ -123,7 +137,7 @@ public class VigenereCipher {
         }
     }
 
-    public void decryFile(String sourceFile, String desFile, String key) throws Exception {
+    public void decryFile(String sourceFile, String desFile, String key, String nameType) throws Exception {
         File file = new File(sourceFile);
         String data="";
         if(file.isFile()){
@@ -135,7 +149,12 @@ public class VigenereCipher {
                 data+=byteRead;
 
             }
-            fos.write(decryption(data, key));
+            if (nameType.equals("VN")){
+                fos.write(decryption_vie(data, key));
+            }else if (nameType.equals("UK")){
+                fos.write(decryption(data, key));
+            }
+
             fis.close();
             fos.flush();
             fos.close();
@@ -170,22 +189,5 @@ public class VigenereCipher {
         return  list;
     }
 
-    public static void main(String[] args) {
-        VigenereCipher vigenereCipher = new VigenereCipher();
-        String text = "thịnh";
-        String key = "cip";
 
-        String y = vigenereCipher.encryption_vie(text, key);
-
-        System.out.println(y);
-        System.out.println(vigenereCipher.decryption_vie(y,key));
-
-//        try {
-//            vigenereCipher.encryFile("src\\example.txt","src\\e.txt", "cip");
-//            vigenereCipher.decryFile("src\\e.txt","src\\e1.txt", "cip");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-
-    }
 }

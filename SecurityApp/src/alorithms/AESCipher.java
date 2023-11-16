@@ -110,30 +110,6 @@ public class AESCipher {
         this.lengthKey = lengthKey;
     }
 
-    public static void main(String[] args) throws Exception {
-        // Khởi tạo dữ liệu cần mã hóa
-        String originalData = "Thịnh thịnh";
-
-        AESCipher aesCipher = new AESCipher();
-        aesCipher.setLengthKey(128);
-        // Tạo khóa bí mật AES
-        SecretKey secretKey = aesCipher.generateAESKey();
-
-        // Mã hóa dữ liệu
-        String encryptedData = aesCipher.encryptAES(originalData);
-        System.out.println("Encrypted Data: " + encryptedData);
-
-        // Giải mã dữ liệu
-        String decryptedData = aesCipher.decryptAES(encryptedData);
-        System.out.println("Decrypted Data: " + decryptedData);
-
-        try {
-            aesCipher.encryFile("C:\\Users\\Thinh\\Desktop\\t.txt","src\\e.txt");
-            aesCipher.decryFile("src\\e.txt","src\\e1.txt");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
 }
